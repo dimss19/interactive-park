@@ -47,12 +47,13 @@ class Settings:
         return self.config.get("models", {}).get("pose_model", "models/yolo11n-pose.pt")
         
     @property
-    def plant_model_path(self) -> str:
-        return self.config.get("models", {}).get("plant_model", "models/yolo11n.pt")
-
-    @property
     def confidence_threshold(self) -> float:
         return float(self.config.get("models", {}).get("confidence_threshold", 0.5))
+
+    @property
+    def plant_zones(self) -> Dict[str, Any]:
+        """Returns the dictionary defining plant zones polygons and properties."""
+        return self.config.get("plant_zones", {})
 
     @property
     def audio_ambience_path(self) -> str:
