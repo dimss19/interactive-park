@@ -1,0 +1,20 @@
+# Config Interactive Park AI
+
+video_source: "assets/videos/sample.mp4" # Path to video file or webcam index (0)
+target_fps: 30
+
+models:
+  person_model: "models/yolo11n.pt"
+  pose_model: "models/yolo11n-pose.pt"
+  plant_model: "models/yolo11n.pt" # Akan digunakan di Milestone 2
+  confidence_threshold: 0.5
+
+roi:
+  # Placeholder (Milestone 3)
+  points: []
+
+audio:
+  # Placeholder (Milestone 5)
+  ambience: "assets/audio/ambience.ogg"
+  plant_touch: "assets/audio/plant.ogg"
+  cooldown_seconds: 5
