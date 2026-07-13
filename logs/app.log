@@ -496,3 +496,31 @@
 [2026-07-13 18:40:39] [INFO] Cleaning up resources...
 [2026-07-13 18:40:39] [INFO] Video capture released
 [2026-07-13 18:40:39] [INFO] Exited.
+[2026-07-13 18:43:29] [INFO] Starting Interactive Park AI (Polygon ROI & Touch Detection)...
+[2026-07-13 18:43:29] [INFO] Loaded config from config.yaml
+[2026-07-13 18:43:29] [INFO] Video Loaded from source: assets/videos/sample.mp4
+[2026-07-13 18:43:29] [INFO] Loading Pose model (Person) from models/yolo11n-pose.pt...
+[2026-07-13 18:43:29] [INFO] Loaded Plant Zone: LEFT_PLANT with 4 points (overlay=OFF).
+[2026-07-13 18:43:29] [INFO] Loaded Plant Zone: RIGHT_PLANT with 4 points (overlay=OFF).
+[2026-07-13 18:43:29] [INFO] Initialization complete. Starting main loop.
+[2026-07-13 18:43:29] [INFO] Video reset to frame 0
+[2026-07-13 18:43:32] [INFO] Frame 30: Person=0 | FPS: 23.6
+[2026-07-13 18:43:33] [INFO] Frame 60: Person=1 | FPS: 22.1
+[2026-07-13 18:43:33] [INFO] Headless testing finished (60 frames).
+[2026-07-13 18:43:33] [INFO] Cleaning up resources...
+[2026-07-13 18:43:33] [INFO] Video capture released
+[2026-07-13 18:43:33] [INFO] Exited.
+[2026-07-13 18:46:53] [INFO] Starting Interactive Park AI (Polygon ROI & Touch Detection)...
+[2026-07-13 18:46:53] [INFO] Loaded config from config.yaml
+[2026-07-13 18:46:53] [INFO] Video Loaded from source: assets/videos/sample.mp4
+[2026-07-13 18:46:53] [INFO] Loading Pose model (Person) from models/yolo11n-pose.pt...
+[2026-07-13 18:46:53] [INFO] Loaded Plant Zone: LEFT_PLANT with 4 points (overlay=OFF).
+[2026-07-13 18:46:53] [INFO] Loaded Plant Zone: RIGHT_PLANT with 4 points (overlay=OFF).
+[2026-07-13 18:46:53] [INFO] Initialization complete. Starting main loop.
+[2026-07-13 18:46:53] [INFO] Video reset to frame 0
+[2026-07-13 18:46:56] [INFO] Frame 30: Person=0 | FPS: 15.9
+[2026-07-13 18:46:57] [INFO] Frame 60: Person=1 | FPS: 23.8
+[2026-07-13 18:46:57] [INFO] Headless testing finished (60 frames).
+[2026-07-13 18:46:57] [INFO] Cleaning up resources...
+[2026-07-13 18:46:57] [INFO] Video capture released
+[2026-07-13 18:46:57] [INFO] Exited.

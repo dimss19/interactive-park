@@ -27,8 +27,6 @@ def main():
     plant_zones = PlantZoneManager()
     plant_zones.load(settings.plant_zones)
     
-    touch_manager = TouchManager(touch_duration_threshold=0.5)
-    
     # We keep AudioManager around, though its logic might need adapting later
     audio_manager = AudioManager()
     
@@ -38,6 +36,9 @@ def main():
     if not success:
         logger.error("Could not read first frame.")
         sys.exit(1)
+
+    frame_height, frame_width = frame.shape[:2]
+    touch_manager = TouchManager(frame_width=frame_width, touch_duration_threshold=0.5)
 
     logger.info("Initialization complete. Starting main loop.")
     
@@ -58,18 +59,8 @@ def main():
 
             persons = pose_detector.detect(frame)
             
-            # Extract wrists from keypoints (COCO: 9=Left Wrist, 10=Right Wrist)
-            wrists = []
-            for p in persons:
-                kpts = p.get("keypoints", [])
-                if len(kpts) > 10:
-                    if kpts[9][2] > 0.5:
-                        wrists.append((int(kpts[9][0]), int(kpts[9][1])))
-                    if kpts[10][2] > 0.5:
-                        wrists.append((int(kpts[10][0]), int(kpts[10][1])))
-            
-            # Touch Detection
-            touch_manager.update(wrists, plant_zones)
+            # Touch Detection based on raised-hand gesture
+            touch_manager.update(persons)
             
             # Drawing
             frame = pose_detector.draw(frame, persons)
