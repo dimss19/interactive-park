@@ -22,7 +22,13 @@ def main():
         logger.error("Could not load video source. Exiting.")
         sys.exit(1)
 
-    pose_detector = PoseDetector(settings.pose_model_path, settings.confidence_threshold)
+    pose_detector = PoseDetector(
+        settings.pose_model_path,
+        settings.confidence_threshold,
+        imgsz=settings.pose_imgsz,
+        device=settings.pose_device,
+        half=settings.pose_half,
+    )
     
     plant_zones = PlantZoneManager()
     plant_zones.load(settings.plant_zones)
@@ -38,7 +44,7 @@ def main():
         sys.exit(1)
 
     frame_height, frame_width = frame.shape[:2]
-    touch_manager = TouchManager(frame_width=frame_width, touch_duration_threshold=0.5)
+    touch_manager = TouchManager(frame_width=frame_width, touch_duration_threshold=0.5, plant_zone_manager=plant_zones)
 
     logger.info("Initialization complete. Starting main loop.")
     
@@ -59,7 +65,7 @@ def main():
 
             persons = pose_detector.detect(frame)
             
-            # Touch Detection based on raised-hand gesture
+            # Touch Detection based on wrist inside the target plant polygon
             touch_manager.update(persons)
             
             # Drawing

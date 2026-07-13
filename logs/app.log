@@ -620,3 +620,134 @@
 [2026-07-13 19:09:09] [INFO] Cleaning up resources...
 [2026-07-13 19:09:09] [INFO] Video capture released
 [2026-07-13 19:09:09] [INFO] Exited.
+[2026-07-13 19:14:43] [INFO] Starting Interactive Park AI (Polygon ROI & Touch Detection)...
+[2026-07-13 19:14:43] [INFO] Loaded config from config.yaml
+[2026-07-13 19:14:43] [INFO] Video Loaded from source: assets/videos/sample.mp4
+[2026-07-13 19:14:43] [INFO] Loading Pose model (Person) from models/yolo11n-pose.pt...
+[2026-07-13 19:14:43] [INFO] Loaded Plant Zone: LEFT_PLANT with 4 points (overlay=OFF).
+[2026-07-13 19:14:43] [INFO] Loaded Plant Zone: RIGHT_PLANT with 4 points (overlay=OFF).
+[2026-07-13 19:14:43] [INFO] Initialization complete. Starting main loop.
+[2026-07-13 19:14:43] [INFO] Video reset to frame 0
+[2026-07-13 19:14:46] [INFO] Frame 30: Person=0 | FPS: 21.5
+[2026-07-13 19:14:48] [INFO] Frame 60: Person=1 | FPS: 21.5
+[2026-07-13 19:14:48] [INFO] [EVENT] PLANT_TOUCH - LEFT_PLANT
+[2026-07-13 19:14:50] [INFO] Frame 90: Person=1 | FPS: 21.8
+[2026-07-13 19:14:51] [INFO] Frame 120: Person=1 | FPS: 21.7
+[2026-07-13 19:14:53] [INFO] Frame 150: Person=1 | FPS: 21.4
+[2026-07-13 19:14:54] [INFO] Frame 180: Person=1 | FPS: 21.5
+[2026-07-13 19:14:56] [INFO] Frame 210: Person=1 | FPS: 21.4
+[2026-07-13 19:14:57] [INFO] Frame 240: Person=1 | FPS: 21.3
+[2026-07-13 19:14:59] [INFO] Frame 270: Person=1 | FPS: 15.8
+[2026-07-13 19:15:01] [INFO] Frame 300: Person=1 | FPS: 21.1
+[2026-07-13 19:15:02] [INFO] Frame 330: Person=1 | FPS: 20.8
+[2026-07-13 19:15:04] [INFO] Frame 360: Person=1 | FPS: 21.4
+[2026-07-13 19:15:05] [INFO] Frame 390: Person=1 | FPS: 21.5
+[2026-07-13 19:15:07] [INFO] Frame 420: Person=1 | FPS: 17.2
+[2026-07-13 19:15:09] [INFO] Frame 450: Person=1 | FPS: 21.3
+[2026-07-13 19:15:10] [INFO] Frame 480: Person=1 | FPS: 21.8
+[2026-07-13 19:15:12] [INFO] Frame 510: Person=1 | FPS: 21.2
+[2026-07-13 19:15:14] [INFO] Frame 540: Person=1 | FPS: 21.0
+[2026-07-13 19:15:15] [INFO] Frame 570: Person=1 | FPS: 16.0
+[2026-07-13 19:15:17] [INFO] Frame 600: Person=1 | FPS: 22.4
+[2026-07-13 19:15:18] [INFO] Frame 630: Person=1 | FPS: 21.5
+[2026-07-13 19:15:20] [INFO] Frame 660: Person=1 | FPS: 21.5
+[2026-07-13 19:15:22] [INFO] Frame 690: Person=1 | FPS: 21.6
+[2026-07-13 19:15:23] [INFO] Frame 720: Person=1 | FPS: 22.0
+[2026-07-13 19:15:25] [INFO] Frame 750: Person=1 | FPS: 21.9
+[2026-07-13 19:15:26] [INFO] Frame 780: Person=1 | FPS: 21.9
+[2026-07-13 19:15:28] [INFO] Frame 810: Person=1 | FPS: 21.4
+[2026-07-13 19:15:30] [INFO] Frame 840: Person=1 | FPS: 21.6
+[2026-07-13 19:15:31] [INFO] Frame 870: Person=1 | FPS: 21.1
+[2026-07-13 19:15:32] [INFO] [EVENT] PLANT_RELEASE - LEFT_PLANT
+[2026-07-13 19:15:33] [INFO] Frame 900: Person=0 | FPS: 16.5
+[2026-07-13 19:15:34] [INFO] Frame 930: Person=1 | FPS: 21.1
+[2026-07-13 19:15:36] [INFO] Frame 960: Person=0 | FPS: 21.8
+[2026-07-13 19:15:37] [INFO] Frame 990: Person=0 | FPS: 21.0
+[2026-07-13 19:15:39] [INFO] Frame 1020: Person=0 | FPS: 20.8
+[2026-07-13 19:15:41] [INFO] Frame 1050: Person=0 | FPS: 21.3
+[2026-07-13 19:15:42] [INFO] Frame 1080: Person=0 | FPS: 21.1
+[2026-07-13 19:15:44] [INFO] Frame 1110: Person=0 | FPS: 21.0
+[2026-07-13 19:15:45] [INFO] Frame 1140: Person=0 | FPS: 16.2
+[2026-07-13 19:15:47] [INFO] Frame 1170: Person=0 | FPS: 21.2
+[2026-07-13 19:15:48] [INFO] Frame 1200: Person=0 | FPS: 21.1
+[2026-07-13 19:15:50] [INFO] Frame 1230: Person=0 | FPS: 21.2
+[2026-07-13 19:15:51] [INFO] Frame 1260: Person=0 | FPS: 21.5
+[2026-07-13 19:15:53] [INFO] Frame 1290: Person=0 | FPS: 21.8
+[2026-07-13 19:15:54] [INFO] Frame 1320: Person=0 | FPS: 21.1
+[2026-07-13 19:15:56] [INFO] Frame 1350: Person=0 | FPS: 21.7
+[2026-07-13 19:15:57] [INFO] Frame 1380: Person=0 | FPS: 21.1
+[2026-07-13 19:15:59] [INFO] Frame 1410: Person=0 | FPS: 16.0
+[2026-07-13 19:16:00] [INFO] Frame 1440: Person=0 | FPS: 21.5
+[2026-07-13 19:16:02] [INFO] Frame 1470: Person=0 | FPS: 21.0
+[2026-07-13 19:16:03] [INFO] Frame 1500: Person=0 | FPS: 20.7
+[2026-07-13 19:16:05] [INFO] Frame 1530: Person=0 | FPS: 21.0
+[2026-07-13 19:16:07] [INFO] Frame 1560: Person=0 | FPS: 21.6
+[2026-07-13 19:16:08] [INFO] Frame 1590: Person=0 | FPS: 21.1
+[2026-07-13 19:16:10] [INFO] Frame 1620: Person=0 | FPS: 21.4
+[2026-07-13 19:16:11] [INFO] Frame 1650: Person=0 | FPS: 22.0
+[2026-07-13 19:16:13] [INFO] Frame 1680: Person=0 | FPS: 21.5
+[2026-07-13 19:16:14] [INFO] Frame 1710: Person=0 | FPS: 21.2
+[2026-07-13 19:16:16] [INFO] Frame 1740: Person=0 | FPS: 21.9
+[2026-07-13 19:16:17] [INFO] Frame 1770: Person=0 | FPS: 22.4
+[2026-07-13 19:16:19] [INFO] Frame 1800: Person=0 | FPS: 22.0
+[2026-07-13 19:16:20] [INFO] Frame 1830: Person=1 | FPS: 21.7
+[2026-07-13 19:16:22] [INFO] Frame 1860: Person=1 | FPS: 20.7
+[2026-07-13 19:16:24] [INFO] Frame 1890: Person=1 | FPS: 21.7
+[2026-07-13 19:16:25] [INFO] Frame 1920: Person=1 | FPS: 21.4
+[2026-07-13 19:16:27] [INFO] Frame 1950: Person=1 | FPS: 21.9
+[2026-07-13 19:16:28] [INFO] Frame 1980: Person=1 | FPS: 20.9
+[2026-07-13 19:16:30] [INFO] Frame 2010: Person=1 | FPS: 21.1
+[2026-07-13 19:16:32] [INFO] Frame 2040: Person=1 | FPS: 21.5
+[2026-07-13 19:16:33] [INFO] Frame 2070: Person=1 | FPS: 21.1
+[2026-07-13 19:16:35] [INFO] Frame 2100: Person=1 | FPS: 21.0
+[2026-07-13 19:16:36] [INFO] Frame 2130: Person=1 | FPS: 21.5
+[2026-07-13 19:16:38] [INFO] Frame 2160: Person=1 | FPS: 18.4
+[2026-07-13 19:16:39] [INFO] Frame 2190: Person=1 | FPS: 22.1
+[2026-07-13 19:16:41] [INFO] Frame 2220: Person=1 | FPS: 24.7
+[2026-07-13 19:16:42] [INFO] Frame 2250: Person=1 | FPS: 22.4
+[2026-07-13 19:16:44] [INFO] Frame 2280: Person=0 | FPS: 22.6
+[2026-07-13 19:16:46] [INFO] Frame 2310: Person=1 | FPS: 16.2
+[2026-07-13 19:16:47] [INFO] Frame 2340: Person=1 | FPS: 21.6
+[2026-07-13 19:16:48] [INFO] Video ended or cannot read frame.
+[2026-07-13 19:16:48] [INFO] Cleaning up resources...
+[2026-07-13 19:16:48] [INFO] Video capture released
+[2026-07-13 19:16:48] [INFO] Exited.
+[2026-07-13 19:55:30] [INFO] Starting Interactive Park AI (Polygon ROI & Touch Detection)...
+[2026-07-13 19:55:30] [INFO] Loaded config from config.yaml
+[2026-07-13 19:55:30] [INFO] Video Loaded from source: assets/videos/sample.mp4
+[2026-07-13 19:55:30] [INFO] Loading Pose model (Person) from models/yolo11s-pose.pt | imgsz=640 | device=cpu | half=False...
+[2026-07-13 19:55:30] [INFO] Loaded Plant Zone: LEFT_PLANT with 4 points (overlay=OFF).
+[2026-07-13 19:55:30] [INFO] Loaded Plant Zone: RIGHT_PLANT with 4 points (overlay=OFF).
+[2026-07-13 19:55:30] [INFO] Initialization complete. Starting main loop.
+[2026-07-13 19:55:30] [INFO] Video reset to frame 0
+[2026-07-13 19:55:36] [INFO] Frame 30: Person=0 | FPS: 6.4
+[2026-07-13 19:55:37] [INFO] [EVENT] PLANT_TOUCH - LEFT_PLANT
+[2026-07-13 19:55:40] [INFO] Frame 60: Person=1 | FPS: 7.1
+[2026-07-13 19:55:44] [INFO] Frame 90: Person=1 | FPS: 6.5
+[2026-07-13 19:55:49] [INFO] Frame 120: Person=1 | FPS: 7.1
+[2026-07-13 19:55:53] [INFO] Frame 150: Person=1 | FPS: 7.1
+[2026-07-13 19:55:58] [INFO] Frame 180: Person=1 | FPS: 7.1
+[2026-07-13 19:56:02] [INFO] Frame 210: Person=1 | FPS: 6.4
+[2026-07-13 19:56:07] [INFO] Frame 240: Person=1 | FPS: 6.4
+[2026-07-13 19:56:12] [INFO] Frame 270: Person=1 | FPS: 6.3
+[2026-07-13 19:56:16] [INFO] Frame 300: Person=1 | FPS: 6.4
+[2026-07-13 19:56:21] [INFO] Frame 330: Person=1 | FPS: 7.1
+[2026-07-13 19:56:25] [INFO] Frame 360: Person=1 | FPS: 7.1
+[2026-07-13 19:56:30] [INFO] Frame 390: Person=1 | FPS: 6.4
+[2026-07-13 19:56:34] [INFO] Frame 420: Person=1 | FPS: 7.0
+[2026-07-13 19:56:39] [INFO] Frame 450: Person=1 | FPS: 6.5
+[2026-07-13 19:56:43] [INFO] Frame 480: Person=1 | FPS: 7.1
+[2026-07-13 19:56:48] [INFO] Frame 510: Person=1 | FPS: 7.1
+[2026-07-13 19:56:52] [INFO] Frame 540: Person=1 | FPS: 7.1
+[2026-07-13 19:56:53] [INFO] Interrupted by user.
+[2026-07-13 19:56:53] [INFO] Cleaning up resources...
+[2026-07-13 19:56:53] [INFO] Video capture released
+[2026-07-13 19:56:53] [INFO] Exited.
+[2026-07-13 20:00:42] [INFO] Starting Interactive Park AI (Polygon ROI & Touch Detection)...
+[2026-07-13 20:00:42] [INFO] Loaded config from config.yaml
+[2026-07-13 20:00:42] [INFO] Video Loaded from source: assets/videos/sample.mp4
+[2026-07-13 20:00:42] [INFO] Loading Pose model (Person) from models/yolo11s-pose.pt | imgsz=640 | device=cpu | half=False...
+[2026-07-13 20:00:42] [INFO] Loaded Plant Zone: LEFT_PLANT with 4 points (overlay=OFF).
+[2026-07-13 20:00:42] [INFO] Loaded Plant Zone: RIGHT_PLANT with 4 points (overlay=OFF).
+[2026-07-13 20:00:43] [INFO] Initialization complete. Starting main loop.
+[2026-07-13 20:00:43] [INFO] Video reset to frame 0

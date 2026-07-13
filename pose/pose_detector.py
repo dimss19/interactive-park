@@ -1,5 +1,6 @@
 import cv2
 import logging
+
 from ultralytics import YOLO
 import numpy as np
 from typing import List, Dict, Any
@@ -7,27 +8,41 @@ from typing import List, Dict, Any
 class PoseDetector:
     """Class to detect Person bounding boxes and Skeletons."""
 
-    def __init__(self, model_path: str, confidence_threshold: float = 0.5):
+    def __init__(self, model_path: str, confidence_threshold: float = 0.5, imgsz: int = 640, device: str = "auto", half: bool = True):
         self.confidence_threshold = confidence_threshold
+        self.imgsz = imgsz
+        self.device = self._resolve_device(device)
+        self.half = half and self.device != "cpu"
         try:
-            logging.info(f"Loading Pose model (Person) from {model_path}...")
+            logging.info(f"Loading Pose model (Person) from {model_path} | imgsz={self.imgsz} | device={self.device} | half={self.half}...")
             self.model = YOLO(model_path)
         except Exception as e:
             logging.error(f"Failed to load pose model: {e}")
             self.model = None
 
+    def _resolve_device(self, device: str) -> str:
+        """Use CUDA automatically when available, otherwise fall back to CPU."""
+        if device != "auto":
+            return device
+        try:
+            import torch
+            return "cuda:0" if torch.cuda.is_available() else "cpu"
+        except Exception:
+            return "cpu"
+
     def detect(self, frame: np.ndarray) -> List[Dict[str, Any]]:
-        """Detect person and pose in the frame using optimized imgsz=320."""
+        """Detect person and pose in the frame."""
         results = []
         if self.model is None:
             return results
 
-        # Predict with imgsz=320 for performance
         pose_res = self.model.predict(
             source=frame,
             conf=self.confidence_threshold,
-            classes=[0], # Person only
-            imgsz=320,
+            classes=[0],  # Person only
+            imgsz=self.imgsz,
+            device=self.device,
+            half=self.half,
             verbose=False
         )
 

@@ -1,6 +1,6 @@
 import time
 import logging
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Tuple
 
 # COCO keypoint indices
 LEFT_SHOULDER  = 5
@@ -12,6 +12,7 @@ RIGHT_WRIST    = 10
 
 VISIBLE_KEYPOINT_CONF = 0.4
 BODY_CENTER_KEYPOINTS = (LEFT_SHOULDER, RIGHT_SHOULDER, LEFT_HIP, RIGHT_HIP)
+WRIST_KEYPOINTS = (LEFT_WRIST, RIGHT_WRIST)
 
 # Wrist must be this many pixels ABOVE the shoulder to count as "raised"
 RAISE_THRESHOLD_PX = 20
@@ -19,18 +20,21 @@ RAISE_THRESHOLD_PX = 20
 
 class TouchManager:
     """
-    Detects 'raised hand toward plants' gestures.
+    Detects hand touches against plant polygons.
 
     Logic:
     - Determine person's side from torso skeleton position vs frame midpoint.
-    - If the person is on the LEFT side and raises EITHER hand, LEFT_PLANT touches.
-    - If the person is on the RIGHT side and raises EITHER hand, RIGHT_PLANT touches.
+    - If the skeleton is on the LEFT side, only LEFT_PLANT can be touched.
+    - If the skeleton is on the RIGHT side, only RIGHT_PLANT can be touched.
+    - Either wrist can trigger the selected plant, but the wrist must be inside
+      that plant's polygon ROI.
     - Touch is confirmed after the gesture is held for `touch_duration_threshold` seconds.
     """
 
-    def __init__(self, frame_width: int, touch_duration_threshold: float = 0.5):
+    def __init__(self, frame_width: int, touch_duration_threshold: float = 0.5, plant_zone_manager: Any = None):
         self.frame_midpoint = frame_width // 2
         self.touch_duration_threshold = touch_duration_threshold
+        self.plant_zone_manager = plant_zone_manager
 
         # State per zone
         self.zone_states: Dict[str, Any] = {
@@ -63,14 +67,37 @@ class TouchManager:
 
         return "LEFT_PLANT" if center_x < self.frame_midpoint else "RIGHT_PLANT"
 
+    def _get_visible_wrists(self, kpts) -> List[Tuple[int, int]]:
+        """Return visible wrist coordinates from either hand."""
+        wrists = []
+        for idx in WRIST_KEYPOINTS:
+            if len(kpts) > idx and kpts[idx][2] >= VISIBLE_KEYPOINT_CONF:
+                wrists.append((int(kpts[idx][0]), int(kpts[idx][1])))
+        return wrists
+
+    def _zone_key_for_side(self, side: str) -> str:
+        return "left" if side == "LEFT_PLANT" else "right"
+
+    def _is_wrist_inside_target_plant(self, kpts, side: str) -> bool:
+        """Check whether either visible wrist is inside the plant polygon for this skeleton side."""
+        if self.plant_zone_manager is None:
+            return self._is_any_hand_raised(kpts)
+
+        zone_key = self._zone_key_for_side(side)
+        for wrist_point in self._get_visible_wrists(kpts):
+            if self.plant_zone_manager.is_inside(wrist_point, zone_key):
+                return True
+        return False
+
     def _is_any_hand_raised(self, kpts) -> bool:
         """
+        Fallback when polygon ROI is not provided.
         Returns True if EITHER the left or right wrist is raised above its respective shoulder.
         """
         def raised(wrist_idx, shoulder_idx):
             if len(kpts) <= max(wrist_idx, shoulder_idx):
                 return False
-            if kpts[wrist_idx][2] < 0.4 or kpts[shoulder_idx][2] < 0.4:
+            if kpts[wrist_idx][2] < VISIBLE_KEYPOINT_CONF or kpts[shoulder_idx][2] < VISIBLE_KEYPOINT_CONF:
                 return False
             # In image coords Y increases downward, so raised = wrist_y < shoulder_y
             return (kpts[shoulder_idx][1] - kpts[wrist_idx][1]) > RAISE_THRESHOLD_PX
@@ -79,7 +106,7 @@ class TouchManager:
 
     def update(self, persons: List[Dict]):
         """
-        Evaluate each detected person's side and hand gesture, then update touch states.
+        Evaluate each detected person's side and wrist position, then update touch states.
         """
         current_time = time.time()
 
@@ -95,7 +122,7 @@ class TouchManager:
             if side == "UNKNOWN":
                 continue
 
-            if self._is_any_hand_raised(kpts):
+            if self._is_wrist_inside_target_plant(kpts, side):
                 active_zones_this_frame.add(side)
 
         # State machine: evaluate each zone

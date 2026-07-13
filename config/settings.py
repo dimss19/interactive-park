@@ -51,6 +51,18 @@ class Settings:
         return float(self.config.get("models", {}).get("confidence_threshold", 0.5))
 
     @property
+    def pose_imgsz(self) -> int:
+        return int(self.config.get("models", {}).get("pose_imgsz", 640))
+
+    @property
+    def pose_device(self) -> str:
+        return str(self.config.get("models", {}).get("pose_device", "auto"))
+
+    @property
+    def pose_half(self) -> bool:
+        return bool(self.config.get("models", {}).get("pose_half", True))
+
+    @property
     def plant_zones(self) -> Dict[str, Any]:
         """Returns the dictionary defining plant zones polygons and properties."""
         return self.config.get("plant_zones", {})
