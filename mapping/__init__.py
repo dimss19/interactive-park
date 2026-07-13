@@ -1,1 +1,1 @@
-"""Mapping Module."""
+"""Interactive mapping tools."""

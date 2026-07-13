@@ -1,47 +1,35 @@
 import logging
 import time
+from typing import Dict, Iterable
+
 
 class AudioManager:
-    """Manages audio triggers based on active zones."""
+    """Simulates ambience and plant effect audio triggers."""
 
-    def __init__(self):
-        # We simulate playing audio for now
-        self.playing_left = False
-        self.playing_right = False
-        
-        # Debounce/Cooldown to avoid log spam
-        self.last_log_left = 0
-        self.last_log_right = 0
-        self.log_cooldown = 2.0 # seconds
+    def __init__(self, log_cooldown: float = 2.0):
+        self.playing_ambience: Dict[str, bool] = {}
+        self.last_log: Dict[str, float] = {}
+        self.log_cooldown = log_cooldown
 
-    def update(self, active_person_zones: list):
-        """
-        Trigger audio based on where persons are detected.
-        """
+    def update_ambience(self, active_area_names: Iterable[str]) -> None:
         current_time = time.time()
-        
-        # Check Left Zone
-        if "LEFT" in active_person_zones:
-            if not self.playing_left:
-                self.playing_left = True
-                logging.info("[AUDIO] -> TRIGGER: ambience_left.mp3 started.")
-            elif current_time - self.last_log_left > self.log_cooldown:
-                logging.info("[AUDIO] ambience_left.mp3 is playing...")
-                self.last_log_left = current_time
-        else:
-            if self.playing_left:
-                self.playing_left = False
-                logging.info("[AUDIO] -> STOP: ambience_left.mp3 stopped.")
+        active = set(active_area_names)
 
-        # Check Right Zone
-        if "RIGHT" in active_person_zones:
-            if not self.playing_right:
-                self.playing_right = True
-                logging.info("[AUDIO] -> TRIGGER: ambience_right.mp3 started.")
-            elif current_time - self.last_log_right > self.log_cooldown:
-                logging.info("[AUDIO] ambience_right.mp3 is playing...")
-                self.last_log_right = current_time
-        else:
-            if self.playing_right:
-                self.playing_right = False
-                logging.info("[AUDIO] -> STOP: ambience_right.mp3 stopped.")
+        for area_name in active:
+            if not self.playing_ambience.get(area_name, False):
+                self.playing_ambience[area_name] = True
+                logging.info(f"[AUDIO] -> START AMBIENCE: {area_name}")
+            elif current_time - self.last_log.get(area_name, 0.0) > self.log_cooldown:
+                logging.info(f"[AUDIO] AMBIENCE PLAYING: {area_name}")
+                self.last_log[area_name] = current_time
+
+        for area_name in list(self.playing_ambience.keys()):
+            if area_name not in active and self.playing_ambience.get(area_name, False):
+                self.playing_ambience[area_name] = False
+                logging.info(f"[AUDIO] -> STOP AMBIENCE: {area_name}")
+
+    def update_plant_events(self, events: Dict[str, list]) -> None:
+        for zone_name in events.get("touch", []):
+            logging.info(f"[AUDIO] -> PLAY PLANT EFFECT: {zone_name}")
+        for zone_name in events.get("release", []):
+            logging.info(f"[AUDIO] -> RELEASE PLANT EFFECT: {zone_name}")

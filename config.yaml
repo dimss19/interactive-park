@@ -1,40 +1,115 @@
-# Config Interactive Park AI
-
-video_source: "assets/videos/sample.mp4" # Path to video file or webcam index (0)
+video_source: assets/videos/sample.mp4
 target_fps: 30
-
+mapping:
+  enabled: true
+display:
+  draw_debug_overlay: false
+  draw_pose_overlay: false
 models:
-  person_model: "models/yolo11s.pt"
-  # RTX 3050 laptop profile: stable accuracy without being too heavy.
-  # For better accuracy, download yolo11s-pose.pt into models/ and change this path.
-  pose_model: "models/yolo11s-pose.pt"
+  pose_model: models/yolo11n-pose.pt
   confidence_threshold: 0.4
-  pose_imgsz: 640
-  pose_device: "auto"
+  pose_imgsz: 384
+  pose_device: cuda:0
   pose_half: true
-
-plant_zones:
-  left:
-    name: "LEFT_PLANT"
-    color: [0, 0, 255] # Red in BGR
-    show_overlay: false  # Set true to visualize the zone boundary
+  detect_every_n_frames: 5
+areas:
+  garden:
+    name: GARDEN_AREA
+    type: garden
+    color:
+    - 0
+    - 255
+    - 0
+    show_overlay: true
     polygon:
-      - [0, 50]
-      - [400, 50]
-      - [200, 700]
-      - [0, 700]
-  right:
-    name: "RIGHT_PLANT"
-    color: [255, 0, 0] # Blue in BGR
-    show_overlay: false  # Set true to visualize the zone boundary
+    - - 227
+      - 615
+    - - 174
+      - 560
+    - - 242
+      - 560
+    - - 396
+      - 40
+    - - 185
+      - 123
+    - - 134
+      - 347
+    - - 9
+      - 633
+    - - 39
+      - 495
+    - - 27
+      - 455
+    - - 158
+      - 351
+    - - 240
+      - 280
+    - - 292
+      - 344
+    - - 332
+      - 329
+    - - 317
+      - 452
+    - - 302
+      - 741
+    - - 178
+      - 716
+    - - 22
+      - 667
+    - - 242
+      - 664
+  plant_left:
+    name: LEFT_PLANT
+    type: plant
+    color:
+    - 0
+    - 0
+    - 255
+    show_overlay: true
     polygon:
-      - [880, 50]
-      - [1280, 50]
-      - [1280, 700]
-      - [1080, 700]
-
+    - - 0
+      - 50
+    - - 400
+      - 50
+    - - 200
+      - 700
+    - - 0
+      - 700
+  plant_right:
+    name: RIGHT_PLANT
+    type: plant
+    color:
+    - 255
+    - 0
+    - 0
+    show_overlay: true
+    polygon:
+    - - 880
+      - 50
+    - - 1280
+      - 50
+    - - 1280
+      - 700
+    - - 1080
+      - 700
+  walkway:
+    name: WALKWAY
+    type: walkway
+    color:
+    - 255
+    - 255
+    - 255
+    show_overlay: true
+    polygon:
+    - - 450
+      - 0
+    - - 830
+      - 0
+    - - 980
+      - 720
+    - - 300
+      - 720
 audio:
-  # Placeholder (Milestone 5)
-  ambience: "assets/audio/ambience.ogg"
-  plant_touch: "assets/audio/plant.ogg"
+  ambience: assets/audio/ambience.ogg
+  plant_touch: assets/audio/plant.ogg
   cooldown_seconds: 5

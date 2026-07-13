@@ -13,6 +13,8 @@ class PoseDetector:
         self.imgsz = imgsz
         self.device = self._resolve_device(device)
         self.half = half and self.device != "cpu"
+        if device == "auto" and self.device == "cpu":
+            logging.warning("CUDA is not available to PyTorch; pose detection will run on CPU and may not reach 30 FPS.")
         try:
             logging.info(f"Loading Pose model (Person) from {model_path} | imgsz={self.imgsz} | device={self.device} | half={self.half}...")
             self.model = YOLO(model_path)
