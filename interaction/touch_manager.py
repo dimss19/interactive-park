@@ -5,8 +5,13 @@ from typing import List, Dict, Any
 # COCO keypoint indices
 LEFT_SHOULDER  = 5
 RIGHT_SHOULDER = 6
+LEFT_HIP       = 11
+RIGHT_HIP      = 12
 LEFT_WRIST     = 9
 RIGHT_WRIST    = 10
+
+VISIBLE_KEYPOINT_CONF = 0.4
+BODY_CENTER_KEYPOINTS = (LEFT_SHOULDER, RIGHT_SHOULDER, LEFT_HIP, RIGHT_HIP)
 
 # Wrist must be this many pixels ABOVE the shoulder to count as "raised"
 RAISE_THRESHOLD_PX = 20
@@ -17,9 +22,9 @@ class TouchManager:
     Detects 'raised hand toward plants' gestures.
 
     Logic:
-    - Determine person's side based on their body center X vs frame midpoint.
-    - If the person is on the LEFT side of the frame and raises EITHER hand → LEFT_PLANT TOUCH
-    - If the person is on the RIGHT side of the frame and raises EITHER hand → RIGHT_PLANT TOUCH
+    - Determine person's side from torso skeleton position vs frame midpoint.
+    - If the person is on the LEFT side and raises EITHER hand, LEFT_PLANT touches.
+    - If the person is on the RIGHT side and raises EITHER hand, RIGHT_PLANT touches.
     - Touch is confirmed after the gesture is held for `touch_duration_threshold` seconds.
     """
 
@@ -33,25 +38,28 @@ class TouchManager:
             "RIGHT_PLANT": {"is_touching": False, "first_detected_time": 0.0, "triggered": False},
         }
 
-    def _get_person_side(self, kpts) -> str:
+    def _get_person_side(self, person: Dict[str, Any]) -> str:
         """
         Determine which side of the frame the person is on.
-        Uses midpoint between left and right shoulders as body center.
-        Falls back to bounding box center if shoulders are not detected.
+        Uses visible torso keypoints as body center, so raised hands do not
+        decide left/right. Falls back to bounding box center if torso is missing.
         Returns 'LEFT_PLANT' or 'RIGHT_PLANT'.
         """
-        l_shoulder_conf = kpts[LEFT_SHOULDER][2]  if len(kpts) > LEFT_SHOULDER  else 0
-        r_shoulder_conf = kpts[RIGHT_SHOULDER][2] if len(kpts) > RIGHT_SHOULDER else 0
+        kpts = person.get("keypoints", [])
+        visible_body_x = [
+            kpts[idx][0]
+            for idx in BODY_CENTER_KEYPOINTS
+            if len(kpts) > idx and kpts[idx][2] >= VISIBLE_KEYPOINT_CONF
+        ]
 
-        if l_shoulder_conf > 0.4 and r_shoulder_conf > 0.4:
-            center_x = (kpts[LEFT_SHOULDER][0] + kpts[RIGHT_SHOULDER][0]) / 2
-        elif l_shoulder_conf > 0.4:
-            center_x = kpts[LEFT_SHOULDER][0]
-        elif r_shoulder_conf > 0.4:
-            center_x = kpts[RIGHT_SHOULDER][0]
+        if visible_body_x:
+            center_x = sum(visible_body_x) / len(visible_body_x)
         else:
-            # Can't determine side from keypoints
-            return "UNKNOWN"
+            bbox = person.get("bbox")
+            if not bbox:
+                return "UNKNOWN"
+            x1, _, x2, _ = bbox
+            center_x = (x1 + x2) / 2
 
         return "LEFT_PLANT" if center_x < self.frame_midpoint else "RIGHT_PLANT"
 
@@ -83,7 +91,7 @@ class TouchManager:
             if len(kpts) == 0:
                 continue
 
-            side = self._get_person_side(kpts)
+            side = self._get_person_side(person)
             if side == "UNKNOWN":
                 continue
 

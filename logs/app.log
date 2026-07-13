@@ -524,3 +524,99 @@
 [2026-07-13 18:46:57] [INFO] Cleaning up resources...
 [2026-07-13 18:46:57] [INFO] Video capture released
 [2026-07-13 18:46:57] [INFO] Exited.
+[2026-07-13 19:07:09] [INFO] Starting Interactive Park AI (Polygon ROI & Touch Detection)...
+[2026-07-13 19:07:09] [INFO] Loaded config from config.yaml
+[2026-07-13 19:07:09] [INFO] Video Loaded from source: assets/videos/sample.mp4
+[2026-07-13 19:07:09] [INFO] Loading Pose model (Person) from models/yolo11n-pose.pt...
+[2026-07-13 19:07:09] [INFO] Loaded Plant Zone: LEFT_PLANT with 4 points (overlay=OFF).
+[2026-07-13 19:07:09] [INFO] Loaded Plant Zone: RIGHT_PLANT with 4 points (overlay=OFF).
+[2026-07-13 19:07:09] [INFO] Initialization complete. Starting main loop.
+[2026-07-13 19:07:09] [INFO] Video reset to frame 0
+[2026-07-13 19:07:12] [INFO] Frame 30: Person=0 | FPS: 21.5
+[2026-07-13 19:07:13] [INFO] Frame 60: Person=1 | FPS: 21.0
+[2026-07-13 19:07:15] [INFO] Frame 90: Person=1 | FPS: 21.7
+[2026-07-13 19:07:16] [INFO] Frame 120: Person=1 | FPS: 21.5
+[2026-07-13 19:07:18] [INFO] Frame 150: Person=1 | FPS: 20.7
+[2026-07-13 19:07:19] [INFO] Frame 180: Person=1 | FPS: 21.2
+[2026-07-13 19:07:19] [INFO] [EVENT] PLANT_TOUCH - LEFT_PLANT
+[2026-07-13 19:07:20] [INFO] [EVENT] PLANT_RELEASE - LEFT_PLANT
+[2026-07-13 19:07:20] [INFO] Frame 210: Person=1 | FPS: 20.4
+[2026-07-13 19:07:21] [INFO] [EVENT] PLANT_TOUCH - LEFT_PLANT
+[2026-07-13 19:07:22] [INFO] [EVENT] PLANT_RELEASE - LEFT_PLANT
+[2026-07-13 19:07:22] [INFO] Frame 240: Person=1 | FPS: 15.6
+[2026-07-13 19:07:23] [INFO] [EVENT] PLANT_TOUCH - LEFT_PLANT
+[2026-07-13 19:07:23] [INFO] [EVENT] PLANT_RELEASE - LEFT_PLANT
+[2026-07-13 19:07:23] [INFO] Frame 270: Person=1 | FPS: 21.3
+[2026-07-13 19:07:25] [INFO] Frame 300: Person=1 | FPS: 21.2
+[2026-07-13 19:07:26] [INFO] Frame 330: Person=1 | FPS: 21.5
+[2026-07-13 19:07:28] [INFO] Frame 360: Person=1 | FPS: 20.8
+[2026-07-13 19:07:29] [INFO] Frame 390: Person=1 | FPS: 16.2
+[2026-07-13 19:07:31] [INFO] Frame 420: Person=1 | FPS: 16.4
+[2026-07-13 19:07:32] [INFO] Frame 450: Person=1 | FPS: 21.7
+[2026-07-13 19:07:34] [INFO] Frame 480: Person=1 | FPS: 21.9
+[2026-07-13 19:07:35] [INFO] Frame 510: Person=1 | FPS: 21.1
+[2026-07-13 19:07:37] [INFO] Frame 540: Person=1 | FPS: 21.4
+[2026-07-13 19:07:38] [INFO] Frame 570: Person=1 | FPS: 21.3
+[2026-07-13 19:07:40] [INFO] Frame 600: Person=1 | FPS: 21.0
+[2026-07-13 19:07:41] [INFO] Frame 630: Person=1 | FPS: 21.4
+[2026-07-13 19:07:43] [INFO] Frame 660: Person=1 | FPS: 21.7
+[2026-07-13 19:07:44] [INFO] Frame 690: Person=1 | FPS: 15.5
+[2026-07-13 19:07:46] [INFO] Frame 720: Person=1 | FPS: 20.8
+[2026-07-13 19:07:47] [INFO] Frame 750: Person=1 | FPS: 21.2
+[2026-07-13 19:07:48] [INFO] Frame 780: Person=1 | FPS: 20.4
+[2026-07-13 19:07:50] [INFO] Frame 810: Person=1 | FPS: 21.2
+[2026-07-13 19:07:51] [INFO] Frame 840: Person=1 | FPS: 21.1
+[2026-07-13 19:07:53] [INFO] Frame 870: Person=1 | FPS: 21.6
+[2026-07-13 19:07:54] [INFO] Frame 900: Person=0 | FPS: 21.2
+[2026-07-13 19:07:56] [INFO] Frame 930: Person=1 | FPS: 21.1
+[2026-07-13 19:07:57] [INFO] Frame 960: Person=0 | FPS: 21.6
+[2026-07-13 19:07:59] [INFO] Frame 990: Person=0 | FPS: 21.4
+[2026-07-13 19:08:00] [INFO] Frame 1020: Person=0 | FPS: 16.2
+[2026-07-13 19:08:02] [INFO] Frame 1050: Person=0 | FPS: 21.3
+[2026-07-13 19:08:03] [INFO] Frame 1080: Person=0 | FPS: 20.8
+[2026-07-13 19:08:05] [INFO] Frame 1110: Person=0 | FPS: 20.6
+[2026-07-13 19:08:06] [INFO] Frame 1140: Person=0 | FPS: 21.4
+[2026-07-13 19:08:08] [INFO] Frame 1170: Person=0 | FPS: 21.2
+[2026-07-13 19:08:09] [INFO] Frame 1200: Person=0 | FPS: 21.9
+[2026-07-13 19:08:11] [INFO] Frame 1230: Person=0 | FPS: 21.6
+[2026-07-13 19:08:12] [INFO] Frame 1260: Person=0 | FPS: 21.1
+[2026-07-13 19:08:14] [INFO] Frame 1290: Person=0 | FPS: 21.1
+[2026-07-13 19:08:15] [INFO] Frame 1320: Person=0 | FPS: 21.4
+[2026-07-13 19:08:17] [INFO] Frame 1350: Person=0 | FPS: 15.7
+[2026-07-13 19:08:19] [INFO] Frame 1380: Person=0 | FPS: 21.1
+[2026-07-13 19:08:21] [INFO] Frame 1410: Person=0 | FPS: 21.5
+[2026-07-13 19:08:22] [INFO] Frame 1440: Person=0 | FPS: 20.7
+[2026-07-13 19:08:24] [INFO] Frame 1470: Person=0 | FPS: 16.5
+[2026-07-13 19:08:25] [INFO] Frame 1500: Person=0 | FPS: 21.0
+[2026-07-13 19:08:27] [INFO] Frame 1530: Person=0 | FPS: 21.7
+[2026-07-13 19:08:28] [INFO] Frame 1560: Person=0 | FPS: 21.2
+[2026-07-13 19:08:30] [INFO] Frame 1590: Person=0 | FPS: 16.1
+[2026-07-13 19:08:31] [INFO] Frame 1620: Person=0 | FPS: 16.5
+[2026-07-13 19:08:33] [INFO] Frame 1650: Person=0 | FPS: 15.9
+[2026-07-13 19:08:35] [INFO] Frame 1680: Person=0 | FPS: 21.2
+[2026-07-13 19:08:36] [INFO] Frame 1710: Person=0 | FPS: 20.9
+[2026-07-13 19:08:38] [INFO] Frame 1740: Person=0 | FPS: 21.5
+[2026-07-13 19:08:39] [INFO] Frame 1770: Person=0 | FPS: 21.3
+[2026-07-13 19:08:40] [INFO] Frame 1800: Person=0 | FPS: 21.2
+[2026-07-13 19:08:42] [INFO] Frame 1830: Person=1 | FPS: 21.1
+[2026-07-13 19:08:43] [INFO] Frame 1860: Person=1 | FPS: 20.8
+[2026-07-13 19:08:45] [INFO] Frame 1890: Person=1 | FPS: 21.6
+[2026-07-13 19:08:47] [INFO] Frame 1920: Person=1 | FPS: 15.6
+[2026-07-13 19:08:48] [INFO] Frame 1950: Person=1 | FPS: 20.8
+[2026-07-13 19:08:50] [INFO] Frame 1980: Person=1 | FPS: 20.7
+[2026-07-13 19:08:51] [INFO] Frame 2010: Person=1 | FPS: 21.8
+[2026-07-13 19:08:53] [INFO] Frame 2040: Person=1 | FPS: 22.1
+[2026-07-13 19:08:54] [INFO] Frame 2070: Person=1 | FPS: 20.7
+[2026-07-13 19:08:56] [INFO] Frame 2100: Person=1 | FPS: 16.3
+[2026-07-13 19:08:57] [INFO] Frame 2130: Person=1 | FPS: 21.3
+[2026-07-13 19:08:59] [INFO] Frame 2160: Person=1 | FPS: 21.6
+[2026-07-13 19:09:00] [INFO] Frame 2190: Person=1 | FPS: 20.8
+[2026-07-13 19:09:02] [INFO] Frame 2220: Person=1 | FPS: 20.7
+[2026-07-13 19:09:03] [INFO] Frame 2250: Person=1 | FPS: 21.8
+[2026-07-13 19:09:05] [INFO] Frame 2280: Person=0 | FPS: 16.3
+[2026-07-13 19:09:06] [INFO] Frame 2310: Person=1 | FPS: 15.7
+[2026-07-13 19:09:08] [INFO] Frame 2340: Person=1 | FPS: 21.6
+[2026-07-13 19:09:09] [INFO] Video ended or cannot read frame.
+[2026-07-13 19:09:09] [INFO] Cleaning up resources...
+[2026-07-13 19:09:09] [INFO] Video capture released
+[2026-07-13 19:09:09] [INFO] Exited.
