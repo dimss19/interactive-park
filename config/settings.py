@@ -88,3 +88,27 @@ class Settings:
     @property
     def cooldown_seconds(self) -> float:
         return float(self.config.get("audio", {}).get("cooldown_seconds", 5.0))
+
+    @property
+    def audio_enabled(self) -> bool:
+        return bool(self.config.get("audio", {}).get("enabled", True))
+
+    @property
+    def audio_master_volume(self) -> float:
+        return max(0.0, min(1.0, float(self.config.get("audio", {}).get("master_volume", 0.8))))
+
+    @property
+    def audio_sfx(self) -> Dict[str, Any]:
+        configured = self.config.get("audio", {}).get("sfx", {})
+        return configured or {
+            "ambience": {"path": self.audio_ambience_path, "loop": True},
+            "plant_touch": {"path": self.audio_plant_touch_path, "loop": False},
+        }
+
+    @property
+    def web_host(self) -> str:
+        return str(self.config.get("web", {}).get("host", "127.0.0.1"))
+
+    @property
+    def web_port(self) -> int:
+        return int(self.config.get("web", {}).get("port", 8000))

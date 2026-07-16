@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Interactive Park Monitor</title><style>
+:root{color-scheme:dark;font-family:system-ui;background:#0d1412;color:#e8f2ed}body{max-width:1200px;margin:auto;padding:24px}.muted{color:#91a39a}.grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(280px,1fr);gap:18px;margin-top:22px}.card{background:#16201c;border:1px solid #293a32;border-radius:14px;padding:16px}.video{width:100%;min-height:320px;object-fit:contain;background:#050806;border-radius:10px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:#0d1412;padding:12px;border-radius:9px}.value{font-size:1.25rem;font-weight:700}.ok{color:#53d58a}.bad{color:#ff7373}button{border:0;border-radius:8px;padding:8px 12px;cursor:pointer;background:#3ac47d;color:#07120c;font-weight:700}.stop{background:#b9c5bf}.sfx{display:flex;justify-content:space-between;align-items:center;gap:8px;border-top:1px solid #293a32;padding:10px 0}@media(max-width:800px){.grid{grid-template-columns:1fr}}
+</style></head><body>
+<h1>Interactive Park Monitor</h1><div class="muted">Satu kamera atau video · server lokal</div>
+<main class="grid"><section class="card"><img class="video" src="/video-feed" alt="Live camera/video"></section><aside>
+<section class="card"><h2>Status</h2><div class="stats">
+<div class="stat"><div class="muted">Sumber</div><div id="source" class="value">-</div></div>
+<div class="stat"><div class="muted">Koneksi</div><div id="connection" class="value">-</div></div>
+<div class="stat"><div class="muted">FPS</div><div id="fps" class="value">0</div></div>
+<div class="stat"><div class="muted">Person</div><div id="persons" class="value">0</div></div></div>
+<p id="detail" class="muted"></p><button onclick="checkSource()">Periksa sumber</button><p id="check" class="muted"></p></section>
+<section class="card" style="margin-top:18px"><h2>Sound effects</h2><div id="audioInfo" class="muted"></div><div id="sfx"></div></section>
+</aside></main><script>
+async function json(url,options){const r=await fetch(url,options),b=await r.json();if(!r.ok)throw new Error(b.detail||'Request gagal');return b}
+async function refresh(){try{const s=await json('/api/status');source.textContent=`${s.source_type}: ${s.source}`;connection.textContent=s.source_ok?'ONLINE':'OFFLINE';connection.className=`value ${s.source_ok?'ok':'bad'}`;fps.textContent=s.fps;persons.textContent=s.person_count;detail.textContent=s.last_error||`${s.frame_width}x${s.frame_height} · Area: ${s.active_areas.join(', ')||'-'} · Touch: ${s.active_touches.join(', ')||'-'}`;renderSfx(s.audio)}catch(e){detail.textContent=e.message}}
+function renderSfx(a){audioInfo.textContent=`Audio ${a.enabled?'aktif':'nonaktif'} · Mixer ${a.mixer_ready?'siap':'tidak siap'} · Master ${Math.round(a.master_volume*100)}%`;sfx.innerHTML=a.items.map(x=>`<div class="sfx"><span><b>${x.name}</b><br><small class="${x.loaded?'ok':'bad'}">${x.loaded?'siap':x.exists?'mixer gagal':'file tidak ada'}</small></span><span><button onclick="playSfx('${x.name}')">Tes</button> <button class="stop" onclick="stopSfx('${x.name}')">Stop</button></span></div>`).join('')}
+async function checkSource(){check.textContent='Memeriksa...';try{const x=await json('/api/source/check');check.textContent=`${x.message} (${x.width}x${x.height})`}catch(e){check.textContent=e.message}}
+async function playSfx(n){try{await json(`/api/sfx/${n}/play`,{method:'POST'})}catch(e){alert(e.message)}}async function stopSfx(n){await json(`/api/sfx/${n}/stop`,{method:'POST'})}
+refresh();setInterval(refresh,1000)
+</script></body></html>

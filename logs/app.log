@@ -793,3 +793,123 @@
 [2026-07-13 20:36:53] [INFO] Cleaning up resources...
 [2026-07-13 20:36:53] [INFO] Video capture released
 [2026-07-13 20:36:53] [INFO] Exited.
+[2026-07-13 20:39:03] [INFO] Starting Interactive Park AI (Mapping, ROI & Touch Detection)...
+[2026-07-13 20:39:03] [INFO] Loaded config from config.yaml
+[2026-07-13 20:39:03] [INFO] Video Loaded from source: assets/videos/sample.mp4
+[2026-07-13 20:39:03] [INFO] Mapping mode started. Press q in the mapping window to start detection.
+[2026-07-13 20:39:47] [INFO] Starting Interactive Park AI (Mapping, ROI & Touch Detection)...
+[2026-07-13 20:39:47] [INFO] Loaded config from config.yaml
+[2026-07-13 20:39:47] [INFO] Video Loaded from source: assets/videos/sample.mp4
+[2026-07-13 20:39:47] [INFO] Mapping mode started. Press q in the mapping window to start detection.
+[2026-07-13 20:40:27] [INFO] Mapping saved to config.yaml
+[2026-07-13 20:40:27] [INFO] Loaded config from config.yaml
+[2026-07-13 20:40:27] [INFO] Loaded Area: GARDEN_AREA type=garden points=5
+[2026-07-13 20:40:27] [INFO] Loaded Area: LEFT_PLANT type=plant points=4
+[2026-07-13 20:40:27] [INFO] Loaded Area: RIGHT_PLANT type=plant points=4
+[2026-07-13 20:40:27] [INFO] Loaded Area: WALKWAY type=walkway points=4
+[2026-07-13 20:40:27] [INFO] Loading Pose model (Person) from models/yolo11n-pose.pt | imgsz=384 | device=cuda:0 | half=True...
+[2026-07-13 20:40:27] [INFO] Warming up pose detector...
+[2026-07-13 20:40:29] [INFO] Initialization complete. Starting main loop.
+[2026-07-13 20:40:29] [INFO] Video reset to frame 0
+[2026-07-13 20:40:30] [INFO] Frame 30: Person=0 | InGarden=0 | DetectEvery=5 | FPS=21.3
+[2026-07-13 20:40:30] [INFO] [AUDIO] -> START AMBIENCE: GARDEN_AREA
+[2026-07-13 20:40:30] [INFO] [AUDIO] AMBIENCE PLAYING: GARDEN_AREA
+[2026-07-13 20:40:31] [INFO] [AUDIO] -> STOP AMBIENCE: GARDEN_AREA
+[2026-07-13 20:40:31] [INFO] [AUDIO] -> START AMBIENCE: GARDEN_AREA
+[2026-07-13 20:40:31] [INFO] Frame 60: Person=1 | InGarden=1 | DetectEvery=5 | FPS=30.0
+[2026-07-13 20:40:32] [INFO] [EVENT] PLANT_TOUCH - LEFT_PLANT
+[2026-07-13 20:40:32] [INFO] [AUDIO] -> PLAY PLANT EFFECT: LEFT_PLANT
+[2026-07-13 20:40:32] [INFO] [AUDIO] AMBIENCE PLAYING: GARDEN_AREA
+[2026-07-13 20:40:33] [INFO] Frame 90: Person=1 | InGarden=1 | DetectEvery=5 | FPS=30.0
+[2026-07-13 20:40:33] [INFO] [AUDIO] -> STOP AMBIENCE: GARDEN_AREA
+[2026-07-13 20:40:33] [INFO] [EVENT] PLANT_RELEASE - LEFT_PLANT
+[2026-07-13 20:40:33] [INFO] [AUDIO] -> RELEASE PLANT EFFECT: LEFT_PLANT
+[2026-07-13 20:40:34] [INFO] Frame 120: Person=1 | InGarden=0 | DetectEvery=5 | FPS=21.4
+[2026-07-13 20:40:35] [INFO] Frame 150: Person=1 | InGarden=0 | DetectEvery=5 | FPS=21.5
+[2026-07-13 20:40:37] [INFO] Frame 180: Person=1 | InGarden=0 | DetectEvery=5 | FPS=21.2
+[2026-07-13 20:40:38] [INFO] Frame 210: Person=1 | InGarden=0 | DetectEvery=5 | FPS=21.7
+[2026-07-13 20:40:39] [INFO] Frame 240: Person=1 | InGarden=0 | DetectEvery=5 | FPS=22.8
+[2026-07-13 20:40:41] [INFO] Frame 270: Person=1 | InGarden=0 | DetectEvery=5 | FPS=22.1
+[2026-07-13 20:40:42] [INFO] Frame 300: Person=1 | InGarden=0 | DetectEvery=5 | FPS=21.5
+[2026-07-13 20:40:43] [INFO] Frame 330: Person=1 | InGarden=0 | DetectEvery=5 | FPS=22.1
+[2026-07-13 20:40:45] [INFO] Frame 360: Person=1 | InGarden=0 | DetectEvery=5 | FPS=21.2
+[2026-07-13 20:40:46] [INFO] Frame 390: Person=1 | InGarden=0 | DetectEvery=5 | FPS=21.5
+[2026-07-13 20:40:47] [INFO] Frame 420: Person=1 | InGarden=0 | DetectEvery=5 | FPS=20.9
+[2026-07-13 20:40:49] [INFO] Frame 450: Person=1 | InGarden=0 | DetectEvery=5 | FPS=22.0
+[2026-07-13 20:40:50] [INFO] Frame 480: Person=1 | InGarden=0 | DetectEvery=5 | FPS=21.1
+[2026-07-13 20:40:51] [INFO] Frame 510: Person=1 | InGarden=0 | DetectEvery=5 | FPS=21.8
+[2026-07-13 20:40:53] [INFO] Frame 540: Person=1 | InGarden=0 | DetectEvery=5 | FPS=21.1
+[2026-07-13 20:40:54] [INFO] Interrupted by user.
+[2026-07-13 20:40:54] [INFO] Cleaning up resources...
+[2026-07-13 20:40:54] [INFO] Video capture released
+[2026-07-13 20:40:54] [INFO] Exited.
+[2026-07-13 20:40:58] [INFO] Starting Interactive Park AI (Mapping, ROI & Touch Detection)...
+[2026-07-13 20:40:58] [INFO] Loaded config from config.yaml
+[2026-07-13 20:40:59] [INFO] Video Loaded from source: assets/videos/sample.mp4
+[2026-07-13 20:40:59] [INFO] Mapping mode started. Press q in the mapping window to start detection.
+[2026-07-13 20:41:12] [INFO] Mapping saved to config.yaml
+[2026-07-13 20:41:12] [INFO] Loaded config from config.yaml
+[2026-07-13 20:41:12] [INFO] Loaded Area: GARDEN_AREA type=garden points=5
+[2026-07-13 20:41:12] [INFO] Loaded Area: LEFT_PLANT type=plant points=4
+[2026-07-13 20:41:12] [INFO] Loaded Area: RIGHT_PLANT type=plant points=4
+[2026-07-13 20:41:12] [INFO] Loaded Area: WALKWAY type=walkway points=4
+[2026-07-13 20:41:12] [INFO] Loading Pose model (Person) from models/yolo11n-pose.pt | imgsz=384 | device=cuda:0 | half=True...
+[2026-07-13 20:41:12] [INFO] Warming up pose detector...
+[2026-07-13 20:41:13] [INFO] Initialization complete. Starting main loop.
+[2026-07-13 20:41:13] [INFO] Video reset to frame 0
+[2026-07-13 20:41:15] [INFO] Frame 30: Person=0 | InGarden=0 | DetectEvery=5 | FPS=21.3
+[2026-07-13 20:41:15] [INFO] [AUDIO] -> START AMBIENCE: GARDEN_AREA
+[2026-07-13 20:41:15] [INFO] [AUDIO] AMBIENCE PLAYING: GARDEN_AREA
+[2026-07-13 20:41:16] [INFO] Frame 60: Person=1 | InGarden=1 | DetectEvery=5 | FPS=21.5
+[2026-07-13 20:41:16] [INFO] [EVENT] PLANT_TOUCH - LEFT_PLANT
+[2026-07-13 20:41:16] [INFO] [AUDIO] -> PLAY PLANT EFFECT: LEFT_PLANT
+[2026-07-13 20:41:17] [INFO] [AUDIO] AMBIENCE PLAYING: GARDEN_AREA
+[2026-07-13 20:41:17] [INFO] Frame 90: Person=1 | InGarden=1 | DetectEvery=5 | FPS=21.9
+[2026-07-13 20:41:19] [INFO] Frame 120: Person=1 | InGarden=1 | DetectEvery=5 | FPS=21.5
+[2026-07-13 20:41:19] [INFO] [AUDIO] AMBIENCE PLAYING: GARDEN_AREA
+[2026-07-13 20:41:20] [INFO] Frame 150: Person=1 | InGarden=1 | DetectEvery=5 | FPS=21.8
+[2026-07-13 20:41:21] [INFO] [AUDIO] AMBIENCE PLAYING: GARDEN_AREA
+[2026-07-13 20:41:22] [INFO] Frame 180: Person=1 | InGarden=1 | DetectEvery=5 | FPS=21.5
+[2026-07-13 20:41:23] [INFO] Frame 210: Person=1 | InGarden=1 | DetectEvery=5 | FPS=21.8
+[2026-07-13 20:41:23] [INFO] [AUDIO] AMBIENCE PLAYING: GARDEN_AREA
+[2026-07-13 20:41:24] [INFO] Frame 240: Person=1 | InGarden=1 | DetectEvery=5 | FPS=22.3
+[2026-07-13 20:41:25] [INFO] [AUDIO] AMBIENCE PLAYING: GARDEN_AREA
+[2026-07-13 20:41:26] [INFO] Frame 270: Person=1 | InGarden=1 | DetectEvery=5 | FPS=21.7
+[2026-07-13 20:41:27] [INFO] Frame 300: Person=1 | InGarden=1 | DetectEvery=5 | FPS=21.3
+[2026-07-13 20:41:27] [INFO] [AUDIO] AMBIENCE PLAYING: GARDEN_AREA
+[2026-07-13 20:41:28] [INFO] Frame 330: Person=1 | InGarden=1 | DetectEvery=5 | FPS=21.5
+[2026-07-13 20:41:29] [INFO] [AUDIO] AMBIENCE PLAYING: GARDEN_AREA
+[2026-07-13 20:41:30] [INFO] Frame 360: Person=1 | InGarden=1 | DetectEvery=5 | FPS=21.2
+[2026-07-13 20:41:31] [INFO] Frame 390: Person=1 | InGarden=1 | DetectEvery=5 | FPS=22.2
+[2026-07-13 20:41:31] [INFO] [AUDIO] AMBIENCE PLAYING: GARDEN_AREA
+[2026-07-13 20:41:32] [INFO] Frame 420: Person=1 | InGarden=1 | DetectEvery=5 | FPS=21.5
+[2026-07-13 20:41:33] [INFO] [AUDIO] AMBIENCE PLAYING: GARDEN_AREA
+[2026-07-13 20:41:34] [INFO] Frame 450: Person=1 | InGarden=1 | DetectEvery=5 | FPS=21.5
+[2026-07-13 20:41:35] [INFO] Frame 480: Person=1 | InGarden=1 | DetectEvery=5 | FPS=21.3
+[2026-07-13 20:41:35] [INFO] [AUDIO] AMBIENCE PLAYING: GARDEN_AREA
+[2026-07-13 20:41:36] [INFO] Frame 510: Person=1 | InGarden=1 | DetectEvery=5 | FPS=21.5
+[2026-07-13 20:41:37] [INFO] [AUDIO] AMBIENCE PLAYING: GARDEN_AREA
+[2026-07-13 20:41:38] [INFO] Frame 540: Person=1 | InGarden=1 | DetectEvery=5 | FPS=21.6
+[2026-07-13 20:41:39] [INFO] Frame 570: Person=1 | InGarden=1 | DetectEvery=5 | FPS=30.0
+[2026-07-13 20:41:39] [INFO] [AUDIO] AMBIENCE PLAYING: GARDEN_AREA
+[2026-07-13 20:41:41] [INFO] Frame 600: Person=1 | InGarden=1 | DetectEvery=5 | FPS=21.6
+[2026-07-13 20:41:41] [INFO] [AUDIO] AMBIENCE PLAYING: GARDEN_AREA
+[2026-07-13 20:41:42] [INFO] Frame 630: Person=1 | InGarden=1 | DetectEvery=5 | FPS=20.8
+[2026-07-13 20:41:43] [INFO] Frame 660: Person=1 | InGarden=1 | DetectEvery=5 | FPS=21.1
+[2026-07-13 20:41:43] [INFO] [AUDIO] AMBIENCE PLAYING: GARDEN_AREA
+[2026-07-13 20:41:45] [INFO] Frame 690: Person=1 | InGarden=1 | DetectEvery=5 | FPS=21.8
+[2026-07-13 20:41:45] [INFO] [AUDIO] AMBIENCE PLAYING: GARDEN_AREA
+[2026-07-13 20:41:46] [INFO] Frame 720: Person=1 | InGarden=1 | DetectEvery=5 | FPS=21.7
+[2026-07-13 20:41:47] [INFO] Frame 750: Person=1 | InGarden=1 | DetectEvery=5 | FPS=21.3
+[2026-07-13 20:41:48] [INFO] [AUDIO] AMBIENCE PLAYING: GARDEN_AREA
+[2026-07-13 20:41:49] [INFO] Frame 780: Person=1 | InGarden=1 | DetectEvery=5 | FPS=21.2
+[2026-07-13 20:41:50] [INFO] [AUDIO] AMBIENCE PLAYING: GARDEN_AREA
+[2026-07-13 20:41:50] [INFO] Frame 810: Person=1 | InGarden=1 | DetectEvery=5 | FPS=21.9
+[2026-07-13 20:41:51] [INFO] Frame 840: Person=1 | InGarden=1 | DetectEvery=5 | FPS=22.0
+[2026-07-13 20:41:52] [INFO] [AUDIO] AMBIENCE PLAYING: GARDEN_AREA
+[2026-07-13 20:41:53] [INFO] Frame 870: Person=1 | InGarden=1 | DetectEvery=5 | FPS=21.3
+[2026-07-13 20:41:54] [INFO] [AUDIO] AMBIENCE PLAYING: GARDEN_AREA
+[2026-07-13 20:41:54] [INFO] Interrupted by user.
+[2026-07-13 20:41:54] [INFO] Cleaning up resources...
+[2026-07-13 20:41:54] [INFO] Video capture released
+[2026-07-13 20:41:54] [INFO] Exited.

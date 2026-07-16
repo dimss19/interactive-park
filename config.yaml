@@ -22,42 +22,16 @@ areas:
     - 0
     show_overlay: true
     polygon:
-    - - 227
-      - 615
-    - - 174
-      - 560
-    - - 242
-      - 560
-    - - 396
-      - 40
-    - - 185
-      - 123
-    - - 134
-      - 347
-    - - 9
-      - 633
-    - - 39
-      - 495
-    - - 27
-      - 455
-    - - 158
-      - 351
-    - - 240
-      - 280
-    - - 292
-      - 344
-    - - 332
-      - 329
-    - - 317
-      - 452
-    - - 302
-      - 741
-    - - 178
-      - 716
-    - - 22
-      - 667
-    - - 242
-      - 664
+    - - 5
+      - 6
+    - - 12
+      - 763
+    - - 455
+      - 744
+    - - 466
+      - 44
+    - - 457
+      - 16
   plant_left:
     name: LEFT_PLANT
     type: plant
@@ -110,6 +84,20 @@ areas:
     - - 300
       - 720
 audio:
+  enabled: true
+  master_volume: 0.8
   ambience: assets/audio/ambience.ogg
   plant_touch: assets/audio/plant.ogg
   cooldown_seconds: 5
+  sfx:
+    ambience:
+      path: assets/audio/ambience.ogg
+      volume: 0.5
+      loop: true
+    plant_touch:
+      path: assets/audio/plant.ogg
+      volume: 1.0
+      loop: false
+web:
+  host: 127.0.0.1
+  port: 8000
