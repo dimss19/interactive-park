@@ -75,6 +75,15 @@ class AudioManager:
             channel.stop()
             return True
 
+    def shutdown(self) -> None:
+        """Stop channels owned by this manager before configuration reload."""
+        with self._lock:
+            for channel in self.channels.values():
+                if channel is not None:
+                    channel.stop()
+            self.channels.clear()
+            self.playing_ambience.clear()
+
     def update_ambience(self, active_area_names: Iterable[str]) -> None:
         current_time = time.time()
         active = set(active_area_names)
@@ -91,8 +100,9 @@ class AudioManager:
                 if not any(self.playing_ambience.values()):
                     self.stop("ambience")
 
-    def update_plant_events(self, events: Dict[str, list]) -> None:
+    def update_plant_events(self, events: Dict[str, list], zone_sfx: Dict[str, str] | None = None) -> None:
+        routes = zone_sfx or {}
         for zone_name in events.get("touch", []):
-            effect = zone_name.lower() if zone_name.lower() in self.sfx_config else "plant_touch"
+            effect = routes.get(zone_name) or (zone_name.lower() if zone_name.lower() in self.sfx_config else "plant_touch")
             logging.info(f"[AUDIO] -> PLAY EFFECT: {effect}")
             self.play(effect, loops=0)

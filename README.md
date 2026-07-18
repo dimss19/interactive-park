@@ -101,6 +101,19 @@ display:
 
 Nonaktifkan overlay setelah mapping dan threshold sudah stabil untuk mengurangi beban pemrosesan.
 
+Konfigurasi bawaan memproses pose setiap frame dengan target 30 FPS agar skeleton mengikuti orang dan posisi tangan terlihat saat masuk ke zona tanaman:
+
+```yaml
+target_fps: 30
+models:
+  detect_every_n_frames: 1
+display:
+  draw_debug_overlay: true
+  draw_pose_overlay: true
+```
+
+Lingkaran biru muda menunjukkan posisi wrist. Ketika wrist masuk ke polygon tanaman, lingkaran berubah menjadi kuning dan label `TOUCH` ditampilkan. Nilai 30 FPS adalah target; FPS aktual bergantung pada GPU, resolusi video, dan ukuran model.
+
 ### 5. Jalankan server
 
 Dari root project, jalankan:
@@ -112,7 +125,7 @@ python server.py
 Jika berhasil, buka alamat berikut pada browser:
 
 ```text
-http://127.0.0.1:8000
+http://127.0.0.1:8080
 ```
 
 Dashboard menampilkan:
@@ -123,24 +136,72 @@ Dashboard menampilkan:
 - FPS pemrosesan.
 - Jumlah orang yang terdeteksi.
 - Area taman dan tanaman yang aktif.
-- Status file serta tombol pengujian SFX.
+- Pemilihan webcam atau video tanpa mengedit YAML.
+- Upload video testing.
+- Editor polygon garden dan plant langsung di atas video.
+- Upload, pengujian, dan penghapusan konfigurasi SFX.
 
 Klik **Periksa sumber** untuk memastikan video dapat dibuka dan dibaca.
 
 Status juga dapat diperiksa melalui API:
 
 ```text
-http://127.0.0.1:8000/api/source/check
-http://127.0.0.1:8000/api/status
+http://127.0.0.1:8080/api/source/check
+http://127.0.0.1:8080/api/status
 ```
 
 Dokumentasi API tersedia di:
 
 ```text
-http://127.0.0.1:8000/docs
+http://127.0.0.1:8080/docs
 ```
 
 Hentikan server dengan menekan `Ctrl+C` pada terminal.
+
+## Mengatur semuanya melalui dashboard web
+
+Setelah membuka `http://127.0.0.1:8080`, gunakan tab berikut:
+
+### Video / Webcam
+
+1. Pilih `Webcam 0`, `Webcam 1`, atau video yang tersedia.
+2. Klik **Gunakan sumber**.
+3. Untuk video baru, klik **Upload video**, tunggu hingga selesai, lalu pilih video tersebut dan klik **Gunakan sumber**.
+4. Klik **Periksa sumber aktif** untuk memastikan frame dapat dibaca.
+
+File video yang diunggah disimpan ke `assets/videos/`. Pergantian sumber disimpan ke `config.yaml` dan pipeline dimuat ulang secara otomatis.
+
+### Mapping
+
+1. Buka tab **Mapping**.
+2. Klik **Buat semua area** untuk membuat preset Taman, Tanaman Kiri, Tanaman Kanan, dan Jalan sekaligus.
+3. Klik tombol **Taman**, **Tanaman kiri**, **Tanaman kanan**, atau **Jalan** untuk memilih area yang ingin diedit.
+4. Seret titik bulat pada polygon agar mengikuti batas objek pada video.
+5. Polygon juga dapat dipilih dengan mengklik bagian dalam area tersebut.
+6. Pilih SFX untuk area bertipe `plant`, lalu klik **Update data area**.
+7. Klik **Simpan semua mapping** untuk menulis konfigurasi dan memuat ulang pipeline.
+
+Gunakan **Reset posisi preset** jika polygon lama berada di luar video, **Gambar ulang** untuk membuat polygon bebas, **Undo titik** untuk membatalkan titik terakhir, **Update data area** untuk mengganti nama/tipe/SFX, dan **Hapus area** untuk menghapus polygon.
+
+Fungsi area standar:
+
+- **Taman**: batas utama tempat interaksi pengunjung diaktifkan.
+- **Tanaman kiri**: area sentuhan tanaman pada sisi kiri video.
+- **Tanaman kanan**: area sentuhan tanaman pada sisi kanan video.
+- **Jalan**: batas jalur pengunjung yang dapat digunakan untuk visualisasi atau logika lanjutan.
+
+### SFX
+
+1. Buka tab **SFX**.
+2. Isi ID SFX tanpa spasi, misalnya `orchid_bloom`.
+3. Atur volume dan pilihan loop.
+4. Pilih file OGG, WAV, atau MP3.
+5. Klik **Simpan SFX**.
+6. Gunakan tombol **Tes** untuk mendengarkan suara.
+7. Kembali ke tab **Mapping**, pilih zona tanaman, lalu pilih SFX tersebut pada field **SFX tanaman**.
+8. Klik **Update data area**, lalu **Simpan semua mapping**.
+
+File audio yang diunggah disimpan ke `assets/audio/`. Menghapus SFX dari dashboard hanya menghapus konfigurasinya; file audio tetap disimpan agar tidak terjadi penghapusan data secara tidak sengaja.
 
 ## Menjalankan dengan webcam
 

@@ -2,7 +2,6 @@ import logging
 import os
 import threading
 import time
-from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Dict, Iterator
 
 import cv2
@@ -28,9 +27,11 @@ class MonitorService:
         self.audio = AudioManager(settings.audio_sfx, settings.audio_enabled, settings.audio_master_volume)
         self._thread = None
         self._stop = threading.Event()
+        self._lifecycle_lock = threading.Lock()
         self._frame_lock = threading.Lock()
         self._status_lock = threading.Lock()
         self._latest_jpeg = None
+        self._latest_raw_jpeg = None
         self._status: Dict[str, Any] = {
             "running": False, "source_ok": False, "source": str(settings.video_source),
             "source_type": "webcam" if isinstance(settings.video_source, int) else "video",
@@ -48,7 +49,33 @@ class MonitorService:
     def stop(self) -> None:
         self._stop.set()
         if self._thread:
-            self._thread.join(timeout=5)
+            self._thread.join(timeout=20)
+            if self._thread.is_alive():
+                raise RuntimeError("Pipeline belum berhenti; tunggu inference selesai lalu coba lagi")
+
+    def reconfigure(self, settings: Settings) -> None:
+        """Restart the pipeline with settings that were saved from the web UI."""
+        with self._lifecycle_lock:
+            self.stop()
+            self.audio.shutdown()
+            self.settings = settings
+            self.areas = AreaManager()
+            self.areas.load(settings.areas)
+            self.touches = TouchManager(0.5, self.areas)
+            self.audio = AudioManager(settings.audio_sfx, settings.audio_enabled,
+                                      settings.audio_master_volume)
+            self.loader = None
+            self.detector = None
+            self._latest_jpeg = None
+            self._latest_raw_jpeg = None
+            self._status = {
+                "running": False, "source_ok": False, "source": str(settings.video_source),
+                "source_type": "webcam" if isinstance(settings.video_source, int) else "video",
+                "fps": 0.0, "person_count": 0, "active_areas": [], "active_touches": [],
+                "last_error": None, "frame_width": 0, "frame_height": 0,
+            }
+            self._stop = threading.Event()
+            self.start()
 
     def status(self) -> Dict[str, Any]:
         with self._status_lock:
@@ -62,7 +89,6 @@ class MonitorService:
 
     def _run(self) -> None:
         self._set_status(running=True, last_error=None)
-        executor = ThreadPoolExecutor(max_workers=1)
         try:
             self.loader = VideoLoader(self.settings.video_source)
             if not self.loader.load_video():
@@ -72,9 +98,11 @@ class MonitorService:
                 self.settings.pose_model_path, self.settings.confidence_threshold,
                 imgsz=self.settings.pose_imgsz, device=self.settings.pose_device,
                 half=self.settings.pose_half)
-            persons, future, count = [], None, 0
+            persons, count = [], 0
             started = time.perf_counter()
+            target_frame_time = 1.0 / max(self.settings.target_fps, 1)
             while not self._stop.is_set():
+                frame_started = time.perf_counter()
                 ok, frame = self.loader.read_frame()
                 if not ok:
                     if isinstance(self.settings.video_source, str) and os.path.isfile(self.settings.video_source):
@@ -82,14 +110,11 @@ class MonitorService:
                         continue
                     raise RuntimeError("Kamera terputus atau frame tidak dapat dibaca")
                 count += 1
-                if future is not None and future.done():
+                if count == 1 or count % self.settings.detect_every_n_frames == 0:
                     try:
-                        persons = future.result()
+                        persons = self.detector.detect(frame)
                     except Exception as exc:
                         logging.error(f"Inference gagal: {exc}")
-                    future = None
-                if future is None and (count == 1 or count % self.settings.detect_every_n_frames == 0):
-                    future = executor.submit(self.detector.detect, frame.copy())
 
                 garden_names, in_garden = set(), []
                 for person in persons:
@@ -99,14 +124,21 @@ class MonitorService:
                         garden_names.add(area["name"])
                 self.audio.update_ambience(garden_names)
                 events = self.touches.update(in_garden)
-                self.audio.update_plant_events(events)
+                zone_sfx = {area["name"]: area.get("audio") for area in self.areas.areas.values()
+                            if area.get("type") == "plant" and area.get("audio")}
+                self.audio.update_plant_events(events, zone_sfx)
 
+                raw_encoded, raw_jpeg = cv2.imencode(".jpg", frame, [cv2.IMWRITE_JPEG_QUALITY, 82])
+                if raw_encoded:
+                    with self._frame_lock:
+                        self._latest_raw_jpeg = raw_jpeg.tobytes()
                 display = frame.copy()
                 if self.settings.draw_pose_overlay:
                     display = self.detector.draw(display, persons)
                 if self.settings.draw_debug_overlay:
                     display = self.areas.draw(display)
                     display = self.areas.draw_person_area_status(display, persons)
+                display = self._draw_interaction_overlay(display, persons, events)
                 encoded, jpeg = cv2.imencode(".jpg", display, [cv2.IMWRITE_JPEG_QUALITY, 80])
                 if encoded:
                     with self._frame_lock:
@@ -116,20 +148,47 @@ class MonitorService:
                 self._set_status(fps=round(count / elapsed, 1), person_count=len(persons),
                                  active_areas=sorted(garden_names), active_touches=events["active"],
                                  frame_width=width, frame_height=height)
-                time.sleep(0.001)
+                remaining = target_frame_time - (time.perf_counter() - frame_started)
+                if remaining > 0:
+                    time.sleep(remaining)
         except Exception as exc:
             logging.exception("Monitor pipeline stopped")
             self._set_status(last_error=str(exc), source_ok=False)
         finally:
-            executor.shutdown(wait=False, cancel_futures=True)
             if self.loader:
                 self.loader.release()
             self._set_status(running=False)
 
-    def mjpeg(self) -> Iterator[bytes]:
+    def _draw_interaction_overlay(self, frame, persons, events):
+        """Highlight wrists and plant contact so interaction is easy to see."""
+        active_zones = set(events.get("active", []))
+        for person_index, person in enumerate(persons, start=1):
+            keypoints = person.get("keypoints", [])
+            for keypoint_index, hand_name in ((9, "L"), (10, "R")):
+                if len(keypoints) <= keypoint_index or keypoints[keypoint_index][2] < 0.4:
+                    continue
+                x, y = int(keypoints[keypoint_index][0]), int(keypoints[keypoint_index][1])
+                area = self.areas.first_area_at_point((x, y), "plant")
+                touching = area is not None
+                color = (0, 255, 255) if touching else (255, 255, 0)
+                radius = 13 if touching else 8
+                cv2.circle(frame, (x, y), radius, color, 3)
+                label = f"P{person_index} {hand_name}"
+                if area:
+                    label += f" TOUCH {area['name']}"
+                cv2.putText(frame, label, (x + 12, max(24, y - 12)),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.55, color, 2)
+
+        status = "TOUCH: " + (", ".join(sorted(active_zones)) if active_zones else "-")
+        cv2.rectangle(frame, (8, 8), (min(frame.shape[1] - 8, 430), 42), (0, 0, 0), -1)
+        cv2.putText(frame, status, (16, 32), cv2.FONT_HERSHEY_SIMPLEX, 0.65,
+                    (0, 255, 255) if active_zones else (210, 210, 210), 2)
+        return frame
+
+    def mjpeg(self, raw: bool = False) -> Iterator[bytes]:
         while True:
             with self._frame_lock:
-                jpeg = self._latest_jpeg
+                jpeg = self._latest_raw_jpeg if raw else self._latest_jpeg
             if jpeg:
                 yield b"--frame\r\nContent-Type: image/jpeg\r\n\r\n" + jpeg + b"\r\n"
             time.sleep(0.04)
