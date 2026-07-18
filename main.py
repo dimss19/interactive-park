@@ -27,7 +27,7 @@ def wait_until_frame_time(loop_start: float, target_frame_time: float) -> None:
 
 
 def main():
-    logger = setup_logger()
+    logger = setup_logger(log_level=settings.log_level)
     logger.info("Starting Interactive Park AI (Mapping, ROI & Touch Detection)...")
 
     settings = Settings("config.yaml")
@@ -61,6 +61,7 @@ def main():
         device=settings.pose_device,
         half=settings.pose_half,
         use_tracker=settings.use_tracker,
+        preprocessing_enabled=settings.preprocessing_enabled,
     )
 
     logger.info("Warming up pose detector...")
@@ -166,5 +167,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
 
 

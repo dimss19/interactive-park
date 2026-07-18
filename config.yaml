@@ -1,5 +1,6 @@
 video_source: assets/videos/WhatsApp Video 2026-07-16 at 15.55.51.mp4
 target_fps: 30
+log_level: INFO
 mapping:
   enabled: true
 display:
@@ -12,61 +13,44 @@ models:
   pose_device: cuda:0
   pose_half: true
   use_tracker: true
+  preprocessing_enabled: true
   detect_every_n_frames: 1
 areas:
-  taman_1:
-    name: taman
+  garden:
+    name: AREA TAMAN
     type: garden
     color:
     - 0
-    - 200
+    - 210
     - 70
     show_overlay: true
     polygon:
-    - - 5
-      - 3
-    - - 476
-      - 6
-    - - 476
-      - 859
-    - - 5
-      - 857
+    - - 0
+      - 1
+    - - 576
+      - 0
+    - - 576
+      - 1024
+    - - 0
+      - 1024
     audio: null
-  tanaman:
-    name: tanaman23
+  plant_left:
+    name: TANAMAN KIRI
     type: plant
     color:
     - 0
-    - 170
+    - 120
     - 255
     show_overlay: true
     polygon:
-    - - 9
-      - 3
-    - - 200
-      - 80
-    - - 254
-      - 312
-    - - 1
-      - 527
-    audio: plant_touch
-  tanaman1:
-    name: tanaman23
-    type: plant
-    color:
-    - 0
-    - 170
-    - 255
-    show_overlay: true
-    polygon:
-    - - 465
-      - 16
-    - - 369
-      - 19
-    - - 374
-      - 302
-    - - 471
-      - 547
+    - - 17
+      - 184
+    - - 275
+      - 183
+    - - 51
+      - 844
+    - - 17
+      - 840
     audio: plant_touch
 audio:
   enabled: true

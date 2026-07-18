@@ -97,7 +97,8 @@ class MonitorService:
             self.detector = PoseDetector(
                 self.settings.pose_model_path, self.settings.confidence_threshold,
                 imgsz=self.settings.pose_imgsz, device=self.settings.pose_device,
-                half=self.settings.pose_half)
+                half=self.settings.pose_half, use_tracker=self.settings.use_tracker,
+                preprocessing_enabled=self.settings.preprocessing_enabled)
             persons, count = [], 0
             started = time.perf_counter()
             target_frame_time = 1.0 / max(self.settings.target_fps, 1)
@@ -106,6 +107,9 @@ class MonitorService:
                 ok, frame = self.loader.read_frame()
                 if not ok:
                     if isinstance(self.settings.video_source, str) and os.path.isfile(self.settings.video_source):
+                        retry_count = retry_count + 1 if 'retry_count' in dir() else 1
+                        if retry_count > 10:
+                            raise RuntimeError("Video terlalu sering gagal dibaca setelah reset")
                         self.loader.reset()
                         continue
                     raise RuntimeError("Kamera terputus atau frame tidak dapat dibaca")
@@ -186,11 +190,17 @@ class MonitorService:
         return frame
 
     def mjpeg(self, raw: bool = False) -> Iterator[bytes]:
+        stale_frames = 0
         while True:
             with self._frame_lock:
                 jpeg = self._latest_raw_jpeg if raw else self._latest_jpeg
             if jpeg:
+                stale_frames = 0
                 yield b"--frame\r\nContent-Type: image/jpeg\r\n\r\n" + jpeg + b"\r\n"
+            else:
+                stale_frames += 1
+                if stale_frames > 125:
+                    break
             time.sleep(0.04)
 
 
@@ -206,3 +216,5 @@ def check_source(source: str | int) -> Dict[str, Any]:
                 "message": "Sumber siap digunakan" if ok else "Sumber tidak dapat dibuka atau dibaca"}
     finally:
         capture.release()
+
+

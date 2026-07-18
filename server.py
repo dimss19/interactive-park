@@ -11,8 +11,10 @@ from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 
 from app.monitor import MonitorService, check_source
+from config.config_lock import config_lock
 from config.settings import Settings
 from utils.logger import setup_logger
+from pydantic import BaseModel, Field
 
 ROOT = Path(__file__).parent.resolve()
 CONFIG_PATH = ROOT / "config.yaml"
@@ -21,7 +23,7 @@ AUDIO_DIR = ROOT / "assets" / "audio"
 VIDEO_EXTENSIONS = {".mp4", ".avi", ".mov", ".mkv", ".webm"}
 AUDIO_EXTENSIONS = {".ogg", ".wav", ".mp3"}
 ID_PATTERN = re.compile(r"^[a-zA-Z0-9_-]+$")
-config_lock = threading.Lock()
+
 
 settings = Settings(str(CONFIG_PATH))
 monitor = MonitorService(settings)
@@ -48,6 +50,24 @@ def write_config(config: Dict[str, Any]) -> None:
         with temporary.open("w", encoding="utf-8") as handle:
             yaml.safe_dump(config, handle, sort_keys=False, allow_unicode=True)
         os.replace(temporary, CONFIG_PATH)
+
+
+def validate_config(config: Dict[str, Any]) -> None:
+    """Validate config structure; raises ValueError on critical issues."""
+    models = config.get("models", {})
+    if models.get("pose_imgsz", 640) not in (256, 384, 448, 512, 640, 736, 832, 960, 1088, 1216, 1280):
+        raise ValueError(f"pose_imgsz harus salah satu dari nilai YOLO yang valid: 256-1280")
+    conf = models.get("confidence_threshold", 0.25)
+    if not (0.0 < conf <= 1.0):
+        raise ValueError("confidence_threshold harus antara 0.0 dan 1.0")
+    for key, area in config.get("areas", {}).items():
+        polygon = area.get("polygon", [])
+        if len(polygon) >= 3:
+            for point in polygon:
+                if len(point) != 2:
+                    raise ValueError(f"Area {key}: setiap titik polygon harus [x, y]")
+        if area.get("type") not in (None, "garden", "plant", "walkway", "ignore"):
+            raise ValueError(f"Area {key}: tipe tidak dikenal '{area.get('type')}'")
 
 
 def reload_monitor() -> None:
@@ -103,7 +123,7 @@ def validate_areas(areas: Dict[str, Dict[str, Any]]) -> None:
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    setup_logger()
+    setup_logger(log_level=settings.log_level)
     monitor.start()
     yield
     monitor.stop()
@@ -130,6 +150,14 @@ def javascript():
 @app.get("/api/status")
 def status():
     return monitor.status()
+
+
+@app.get("/api/health")
+def health():
+    s = monitor.status()
+    return {"status": "ok" if s["running"] and s["source_ok"] else "degraded" if s["running"] else "stopped",
+            "uptime": -1, "source": s["source"], "source_ok": s["source_ok"],
+            "fps": s["fps"], "person_count": s["person_count"]}
 
 
 @app.get("/api/config")
@@ -173,7 +201,7 @@ def select_source(request: SourceRequest):
 
 
 @app.get("/api/source/check")
-def source_check(source: str | None = Query(default=None)):
+async def source_check(source: str | None = Query(default=None)):
     requested = settings.video_source if source is None else source
     current = monitor.status()
     if str(requested) == str(settings.video_source) and current["running"]:
@@ -181,7 +209,9 @@ def source_check(source: str | None = Query(default=None)):
                 "opened": current["source_ok"], "frame_readable": current["frame_width"] > 0,
                 "width": current["frame_width"], "height": current["frame_height"],
                 "message": "Sumber sedang digunakan pipeline" if current["source_ok"] else current["last_error"]}
-    return check_source(requested)
+    import asyncio
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, check_source, requested)
 
 
 @app.put("/api/mapping")
@@ -261,3 +291,8 @@ def raw_video_feed():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host=settings.web_host, port=settings.web_port, reload=False)
+
+
+
+
+

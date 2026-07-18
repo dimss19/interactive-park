@@ -1,16 +1,17 @@
-﻿import cv2
+import cv2
 import logging
 from ultralytics import YOLO
 import numpy as np
 from typing import List, Dict, Any
 
 class PoseDetector:
-    def __init__(self, model_path: str, confidence_threshold: float = 0.5, imgsz: int = 640, device: str = "auto", half: bool = True, use_tracker: bool = False):
+    def __init__(self, model_path: str, confidence_threshold: float = 0.5, imgsz: int = 640, device: str = "auto", half: bool = True, use_tracker: bool = False, preprocessing_enabled: bool = True):
         self.confidence_threshold = confidence_threshold
         self.imgsz = imgsz
         self.device = self._resolve_device(device)
         self.half = half and self.device != "cpu"
         self.use_tracker = use_tracker
+        self.preprocessing_enabled = preprocessing_enabled
         if device == "auto" and self.device == "cpu":
             logging.warning("CUDA is not available to PyTorch; pose detection will run on CPU and may not reach 30 FPS.")
         try:
@@ -47,7 +48,7 @@ class PoseDetector:
         results = []
         if self.model is None:
             return results
-        enhanced = self._preprocess(frame)
+        enhanced = self._preprocess(frame) if self.preprocessing_enabled else frame
         kwargs = dict(
             source=enhanced,
             conf=self.confidence_threshold,
@@ -113,3 +114,4 @@ class PoseDetector:
                         if c1 > 0.5 and c2 > 0.5:
                             cv2.line(frame, (int(x1_k), int(y1_k)), (int(x2_k), int(y2_k)), (255, 0, 0), 2)
         return frame
+

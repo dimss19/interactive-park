@@ -1,6 +1,7 @@
 import yaml
 import os
 import logging
+from config.config_lock import config_lock
 from typing import Dict, Any
 
 
@@ -19,9 +20,10 @@ class Settings:
             return
 
         try:
-            with open(self.config_path, "r", encoding="utf-8") as f:
-                self.config = yaml.safe_load(f) or {}
-                logging.info(f"Loaded config from {self.config_path}")
+            with config_lock:
+                with open(self.config_path, "r", encoding="utf-8") as f:
+                    self.config = yaml.safe_load(f) or {}
+            logging.info(f"Loaded config from {self.config_path}")
         except Exception as e:
             logging.error(f"Failed to load config: {e}")
             self.config = {}
@@ -46,6 +48,10 @@ class Settings:
         return self.config.get("areas", {})
 
     @property
+    def log_level(self) -> str:
+        return str(self.config.get("log_level", "INFO")).upper()
+
+    @property
     def pose_model_path(self) -> str:
         return self.config.get("models", {}).get("pose_model", "models/yolo11s-pose.pt")
 
@@ -59,7 +65,7 @@ class Settings:
 
     @property
     def pose_device(self) -> str:
-        return str(self.config.get("models", {}).get("pose_device", "cuda:0"))
+        return str(self.config.get("models", {}).get("pose_device", "auto"))
 
     @property
     def pose_half(self) -> bool:
@@ -68,6 +74,10 @@ class Settings:
     @property
     def use_tracker(self) -> bool:
         return bool(self.config.get("models", {}).get("use_tracker", False))
+
+    @property
+    def preprocessing_enabled(self) -> bool:
+        return bool(self.config.get("models", {}).get("preprocessing_enabled", True))
 
     @property
     def detect_every_n_frames(self) -> int:
@@ -104,7 +114,7 @@ class Settings:
     @property
     def audio_sfx(self) -> Dict[str, Any]:
         configured = self.config.get("audio", {}).get("sfx", {})
-        return configured or {
+        return configured if configured is not None else {
             "ambience": {"path": self.audio_ambience_path, "loop": True},
             "plant_touch": {"path": self.audio_plant_touch_path, "loop": False},
         }
@@ -116,5 +126,10 @@ class Settings:
     @property
     def web_port(self) -> int:
         return int(self.config.get("web", {}).get("port", 8000))
+
+
+
+
+
 
 

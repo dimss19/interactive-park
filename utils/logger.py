@@ -2,14 +2,14 @@ import logging
 import sys
 import os
 
-def setup_logger(log_file: str = "logs/app.log") -> logging.Logger:
+def setup_logger(log_file: str = "logs/app.log", log_level: str = "INFO") -> logging.Logger:
     """Setup basic logging configuration."""
     
     # Ensure log directory exists
     os.makedirs(os.path.dirname(log_file), exist_ok=True)
     
     logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
+    logger.setLevel(getattr(logging, log_level, logging.INFO))
     
     # Prevent adding handlers multiple times if setup is called again
     if not logger.handlers:
@@ -29,3 +29,4 @@ def setup_logger(log_file: str = "logs/app.log") -> logging.Logger:
         logger.addHandler(fh)
         
     return logger
+

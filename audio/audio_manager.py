@@ -37,9 +37,12 @@ class AudioManager:
                 cfg = self._normalize(raw)
                 path = cfg.get("path", "")
                 if path and os.path.isfile(path):
-                    sound = pygame.mixer.Sound(path)
-                    sound.set_volume(self.master_volume * float(cfg.get("volume", 1.0)))
-                    self.sounds[name] = sound
+                    try:
+                        sound = pygame.mixer.Sound(path)
+                        sound.set_volume(self.master_volume * float(cfg.get("volume", 1.0)))
+                        self.sounds[name] = sound
+                    except Exception as exc:
+                        logging.warning(f"[AUDIO] SFX '{name}' load failed: {exc}")
                 else:
                     logging.warning(f"[AUDIO] SFX '{name}' not loaded; file not found: {path}")
         except Exception as exc:
@@ -72,7 +75,8 @@ class AudioManager:
             channel = self.channels.pop(name, None)
             if channel is None:
                 return False
-            channel.stop()
+            if channel is not None:
+                channel.stop()
             return True
 
     def shutdown(self) -> None:
@@ -106,3 +110,4 @@ class AudioManager:
             effect = routes.get(zone_name) or (zone_name.lower() if zone_name.lower() in self.sfx_config else "plant_touch")
             logging.info(f"[AUDIO] -> PLAY EFFECT: {effect}")
             self.play(effect, loops=0)
+
