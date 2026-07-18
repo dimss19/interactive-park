@@ -60,6 +60,7 @@ def main():
         imgsz=settings.pose_imgsz,
         device=settings.pose_device,
         half=settings.pose_half,
+        use_tracker=settings.use_tracker,
     )
 
     logger.info("Warming up pose detector...")
@@ -76,8 +77,9 @@ def main():
 
     frame_count = 0
     last_persons = []
+    use_async = not settings.use_tracker
     detect_future = None
-    detector_executor = ThreadPoolExecutor(max_workers=1)
+    detector_executor = ThreadPoolExecutor(max_workers=1) if use_async else None
     target_frame_time = 1.0 / max(settings.target_fps, 1)
     detect_every_n_frames = settings.detect_every_n_frames
 
@@ -91,15 +93,22 @@ def main():
 
             frame_count += 1
 
-            if detect_future is not None and detect_future.done():
-                try:
-                    last_persons = detect_future.result()
-                except Exception as e:
-                    logger.error(f"Pose detection failed: {e}")
-                detect_future = None
+            if use_async:
+                if detect_future is not None and detect_future.done():
+                    try:
+                        last_persons = detect_future.result()
+                    except Exception as e:
+                        logger.error(f"Pose detection failed: {e}")
+                    detect_future = None
 
-            if detect_future is None and (frame_count == 1 or frame_count % detect_every_n_frames == 0):
-                detect_future = detector_executor.submit(pose_detector.detect, frame.copy())
+                if detect_future is None and (frame_count == 1 or frame_count % detect_every_n_frames == 0):
+                    detect_future = detector_executor.submit(pose_detector.detect, frame.copy())
+            else:
+                if frame_count == 1 or frame_count % detect_every_n_frames == 0:
+                    try:
+                        last_persons = pose_detector.detect(frame)
+                    except Exception as e:
+                        logger.error(f"Pose detection failed: {e}")
 
             persons = last_persons
 
@@ -148,7 +157,7 @@ def main():
         logger.error(f"Unexpected error in main loop: {e}")
     finally:
         logger.info("Cleaning up resources...")
-        detector_executor.shutdown(wait=True)
+        if detector_executor: detector_executor.shutdown(wait=True)
         video_loader.release()
         if not headless:
             cv2.destroyAllWindows()
@@ -157,3 +166,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+

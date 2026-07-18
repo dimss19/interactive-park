@@ -3,7 +3,7 @@ import logging
 import numpy as np
 from typing import Any, Dict, List, Optional, Tuple
 
-VISIBLE_KEYPOINT_CONF = 0.4
+VISIBLE_KEYPOINT_CONF = 0.25
 LEFT_SHOULDER = 5
 RIGHT_SHOULDER = 6
 LEFT_HIP = 11

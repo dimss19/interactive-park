@@ -47,15 +47,15 @@ class Settings:
 
     @property
     def pose_model_path(self) -> str:
-        return self.config.get("models", {}).get("pose_model", "models/yolo11n-pose.pt")
+        return self.config.get("models", {}).get("pose_model", "models/yolo11s-pose.pt")
 
     @property
     def confidence_threshold(self) -> float:
-        return float(self.config.get("models", {}).get("confidence_threshold", 0.4))
+        return float(self.config.get("models", {}).get("confidence_threshold", 0.25))
 
     @property
     def pose_imgsz(self) -> int:
-        return int(self.config.get("models", {}).get("pose_imgsz", 384))
+        return int(self.config.get("models", {}).get("pose_imgsz", 640))
 
     @property
     def pose_device(self) -> str:
@@ -64,6 +64,10 @@ class Settings:
     @property
     def pose_half(self) -> bool:
         return bool(self.config.get("models", {}).get("pose_half", True))
+
+    @property
+    def use_tracker(self) -> bool:
+        return bool(self.config.get("models", {}).get("use_tracker", False))
 
     @property
     def detect_every_n_frames(self) -> int:
@@ -112,3 +116,5 @@ class Settings:
     @property
     def web_port(self) -> int:
         return int(self.config.get("web", {}).get("port", 8000))
+
+

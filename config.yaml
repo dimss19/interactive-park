@@ -6,11 +6,12 @@ display:
   draw_debug_overlay: true
   draw_pose_overlay: true
 models:
-  pose_model: models/yolo11n-pose.pt
-  confidence_threshold: 0.4
-  pose_imgsz: 384
+  pose_model: models/yolo11s-pose.pt
+  confidence_threshold: 0.25
+  pose_imgsz: 640
   pose_device: cuda:0
   pose_half: true
+  use_tracker: true
   detect_every_n_frames: 1
 areas:
   taman_1:
@@ -85,3 +86,5 @@ audio:
 web:
   host: 127.0.0.1
   port: 8080
+
+

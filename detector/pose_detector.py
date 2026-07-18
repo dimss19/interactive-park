@@ -7,7 +7,7 @@ from typing import List, Dict, Any, Tuple
 class PoseDetector:
     """Class to detect person poses (skeleton) using YOLO11 Pose."""
 
-    def __init__(self, model_path: str, confidence_threshold: float = 0.5):
+    def __init__(self, model_path: str, confidence_threshold: float = 0.25):
         self.model_path = model_path
         self.confidence_threshold = confidence_threshold
         self.model = None
@@ -105,3 +105,4 @@ class PoseDetector:
                 wrists_list.append(wrists)
                 
         return wrists_list
+
