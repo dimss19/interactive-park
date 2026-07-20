@@ -157,7 +157,7 @@ def health():
     s = monitor.status()
     return {"status": "ok" if s["running"] and s["source_ok"] else "degraded" if s["running"] else "stopped",
             "uptime": -1, "source": s["source"], "source_ok": s["source_ok"],
-            "fps": s["fps"], "person_count": s["person_count"]}
+            "fps": s["fps"], "person_count": s["person_count"], "paused": s.get("paused", False)}
 
 
 @app.get("/api/config")
@@ -276,6 +276,24 @@ def play_sfx(name: str):
 @app.post("/api/sfx/{name}/stop")
 def stop_sfx(name: str):
     return {"ok": monitor.audio.stop(name), "name": name}
+
+
+@app.post("/api/pause")
+def pause_pipeline():
+    try:
+        monitor.pause()
+        return {"ok": True, "paused": True}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/resume")
+def resume_pipeline():
+    try:
+        monitor.resume()
+        return {"ok": True, "paused": False}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.get("/video-feed")

@@ -1,4 +1,4 @@
-const state={config:null,media:null,status:null,areas:{},selected:null,drawing:false,dragIndex:null};
+const state={config:null,media:null,status:null,areas:{},selected:null,drawing:false,dragIndex:null,streamPaused:false};
 const $=id=>document.getElementById(id);
 
 async function api(url,options={}){
@@ -79,6 +79,11 @@ async function refreshStatus(){
     $('fps').textContent=s.fps;$('persons').textContent=s.person_count;
     $('interactionStatus').textContent=s.last_error||`Area aktif: ${s.active_areas.join(', ')||'-'} · Touch: ${s.active_touches.join(', ')||'-'}`;
     renderSfxList(s.audio);
+    $('swapCamera').style.display='inline-block';
+    $('useWebcam0').style.display='inline-block';
+    state.streamPaused=!!s.paused;
+    $('toggleStream').textContent=state.streamPaused?'Resume':'Pause';
+    $('toggleStream').className=state.streamPaused?'secondary':'';
   }catch(error){$('connection').textContent='ERROR';notify(error.message,true)}
 }
 
@@ -265,5 +270,25 @@ async function playSfx(name){try{await api(`/api/sfx/${encodeURIComponent(name)}
 async function stopSfx(name){try{await api(`/api/sfx/${encodeURIComponent(name)}/stop`,{method:'POST'})}catch(error){notify(error.message,true)}}
 async function removeSfx(name){if(!confirm(`Hapus konfigurasi SFX ${name}? File audio tidak akan dihapus.`))return;try{await api(`/api/sfx/${encodeURIComponent(name)}`,{method:'DELETE'});notify('Konfigurasi SFX dihapus');await loadConfiguration();await refreshStatus()}catch(error){notify(error.message,true)}}
 window.playSfx=playSfx;window.stopSfx=stopSfx;window.removeSfx=removeSfx;
+
+$('toggleStream').addEventListener('click',async()=>{
+  const button=$('toggleStream');setBusy(button,true,state.streamPaused?'Resume...':'Pause...');
+  try{await api(state.streamPaused?'/api/resume':'/api/pause',{method:'POST'});await refreshStatus()}
+  catch(error){notify(error.message,true)}finally{setBusy(button,false)}
+});
+
+$('swapCamera').addEventListener('click',async()=>{
+  const current=String(state.config?.video_source||'0');
+  const next=current==='0'?'1':'0';
+  const button=$('swapCamera');setBusy(button,true,'Swap...');
+  try{await api('/api/source',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:parseInt(next)})});notify(`Swap ke webcam ${next}`);await loadConfiguration()}
+  catch(error){notify(error.message,true)}finally{setBusy(button,false)}
+});
+
+$('useWebcam0').addEventListener('click',async()=>{
+  const button=$('useWebcam0');setBusy(button,true,'Pakai...');
+  try{await api('/api/source',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:0})});notify('Pakai webcam 0');await loadConfiguration()}
+  catch(error){notify(error.message,true)}finally{setBusy(button,false)}
+});
 
 (async()=>{try{await loadConfiguration();await refreshStatus();setInterval(refreshStatus,1000)}catch(error){notify(error.message,true)}})();

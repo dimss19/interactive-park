@@ -27,13 +27,14 @@ class MonitorService:
         self.audio = AudioManager(settings.audio_sfx, settings.audio_enabled, settings.audio_master_volume)
         self._thread = None
         self._stop = threading.Event()
+        self._pause = threading.Event()
         self._lifecycle_lock = threading.Lock()
         self._frame_lock = threading.Lock()
         self._status_lock = threading.Lock()
         self._latest_jpeg = None
         self._latest_raw_jpeg = None
         self._status: Dict[str, Any] = {
-            "running": False, "source_ok": False, "source": str(settings.video_source),
+            "running": False, "paused": False, "source_ok": False, "source": str(settings.video_source),
             "source_type": "webcam" if isinstance(settings.video_source, int) else "video",
             "fps": 0.0, "person_count": 0, "active_areas": [], "active_touches": [],
             "last_error": None, "frame_width": 0, "frame_height": 0,
@@ -69,12 +70,13 @@ class MonitorService:
             self._latest_jpeg = None
             self._latest_raw_jpeg = None
             self._status = {
-                "running": False, "source_ok": False, "source": str(settings.video_source),
+                "running": False, "paused": False, "source_ok": False, "source": str(settings.video_source),
                 "source_type": "webcam" if isinstance(settings.video_source, int) else "video",
                 "fps": 0.0, "person_count": 0, "active_areas": [], "active_touches": [],
                 "last_error": None, "frame_width": 0, "frame_height": 0,
             }
             self._stop = threading.Event()
+            self._pause = threading.Event()
             self.start()
 
     def status(self) -> Dict[str, Any]:
@@ -83,12 +85,22 @@ class MonitorService:
         result["audio"] = self.audio.status()
         return result
 
+    def pause(self) -> None:
+        self._pause.set()
+        with self._status_lock:
+            self._status["paused"] = True
+
+    def resume(self) -> None:
+        self._pause.clear()
+        with self._status_lock:
+            self._status["paused"] = False
+
     def _set_status(self, **values: Any) -> None:
         with self._status_lock:
             self._status.update(values)
 
     def _run(self) -> None:
-        self._set_status(running=True, last_error=None)
+        self._set_status(running=True, paused=False, last_error=None)
         try:
             self.loader = VideoLoader(self.settings.video_source)
             if not self.loader.load_video():
@@ -103,6 +115,9 @@ class MonitorService:
             started = time.perf_counter()
             target_frame_time = 1.0 / max(self.settings.target_fps, 1)
             while not self._stop.is_set():
+                if self._pause.is_set():
+                    time.sleep(0.05)
+                    continue
                 frame_started = time.perf_counter()
                 ok, frame = self.loader.read_frame()
                 if not ok:

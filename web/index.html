@@ -20,12 +20,13 @@
   <nav><button class="tab active" data-tab="monitor">Monitor</button><button class="tab" data-tab="source">Video / Webcam</button><button class="tab" data-tab="mapping">Mapping</button><button class="tab" data-tab="audio">SFX</button></nav>
 
   <main>
-    <section id="tab-monitor" class="panel tab-panel active">
-      <h2>Live Detection</h2><img class="live-video" src="/video-feed" alt="Live detection">
-      <p id="interactionStatus" class="hint">Menunggu status interaksi...</p>
-    </section>
+      <section id="tab-monitor" class="panel tab-panel active">
+        <h2>Live Detection</h2><img id="liveVideo" class="live-video" src="/video-feed" alt="Live detection">
+        <div class="actions"><button id="toggleStream">Pause</button><button id="swapCamera">Swap Webcam</button><button id="useWebcam0" class="secondary">Pakai Webcam 0</button></div>
+        <p id="interactionStatus" class="hint">Menunggu status interaksi...</p>
+      </section>
 
-    <section id="tab-source" class="panel tab-panel">
+      <section id="tab-source" class="panel tab-panel">
       <h2>Pilih video atau webcam</h2>
       <div class="form-grid">
         <label>Sumber tersedia<select id="sourceSelect"></select></label>
