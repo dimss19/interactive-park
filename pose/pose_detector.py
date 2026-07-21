@@ -13,7 +13,7 @@ class PoseDetector:
         self.use_tracker = use_tracker
         self.preprocessing_enabled = preprocessing_enabled
         if device == "auto" and self.device == "cpu":
-            logging.warning("CUDA is not available to PyTorch; pose detection will run on CPU and may not reach 30 FPS.")
+            logging.warning("No GPU backend (CUDA/MPS) available to PyTorch; pose detection will run on CPU and may not reach 30 FPS.")
         try:
             logging.info(f"Loading Pose model (Person) from {model_path} | imgsz={self.imgsz} | device={self.device} | half={self.half} | tracker={self.use_tracker}...")
             self.model = YOLO(model_path)
@@ -27,11 +27,30 @@ class PoseDetector:
         self.sharp_kernel = np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]]) / 1.0
 
     def _resolve_device(self, device: str) -> str:
+        # Explicit device requested by config (e.g. "cpu", "cuda:0", "mps").
+        # Validate it actually exists; fall back to CPU if not (e.g. CUDA
+        # requested but no NVIDIA GPU / driver on an AMD or Intel machine).
         if device != "auto":
-            return device
+            try:
+                import torch
+                if torch.cuda.is_available() or not device.startswith("cuda"):
+                    return device
+                logging.warning(
+                    "Configured device '%s' is unavailable (no CUDA/NVIDIA GPU). "
+                    "Falling back to CPU for pose detection.",
+                    device,
+                )
+                return "cpu"
+            except Exception:
+                return "cpu"
+        # Auto: pick the best available backend.
         try:
             import torch
-            return "cuda:0" if torch.cuda.is_available() else "cpu"
+            if torch.cuda.is_available():
+                return "cuda:0"
+            if hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+                return "mps"
+            return "cpu"
         except Exception:
             return "cpu"
 

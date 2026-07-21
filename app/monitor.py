@@ -23,7 +23,7 @@ class MonitorService:
         self.detector = None
         self.areas = AreaManager()
         self.areas.load(settings.areas)
-        self.touches = TouchManager(0.5, self.areas)
+        self.touches = TouchManager(0.0, self.areas)
         self.audio = AudioManager(settings.audio_sfx, settings.audio_enabled, settings.audio_master_volume)
         self._thread = None
         self._stop = threading.Event()
@@ -37,6 +37,7 @@ class MonitorService:
             "running": False, "paused": False, "source_ok": False, "source": str(settings.video_source),
             "source_type": "webcam" if isinstance(settings.video_source, int) else "video",
             "fps": 0.0, "person_count": 0, "active_areas": [], "active_touches": [],
+            "touch_events": [], "release_events": [],
             "last_error": None, "frame_width": 0, "frame_height": 0,
         }
 
@@ -49,6 +50,8 @@ class MonitorService:
 
     def stop(self) -> None:
         self._stop.set()
+        if self.loader:
+            self.loader.release()
         if self._thread:
             self._thread.join(timeout=20)
             if self._thread.is_alive():
@@ -62,7 +65,7 @@ class MonitorService:
             self.settings = settings
             self.areas = AreaManager()
             self.areas.load(settings.areas)
-            self.touches = TouchManager(0.5, self.areas)
+            self.touches = TouchManager(0.0, self.areas)
             self.audio = AudioManager(settings.audio_sfx, settings.audio_enabled,
                                       settings.audio_master_volume)
             self.loader = None
@@ -73,6 +76,7 @@ class MonitorService:
                 "running": False, "paused": False, "source_ok": False, "source": str(settings.video_source),
                 "source_type": "webcam" if isinstance(settings.video_source, int) else "video",
                 "fps": 0.0, "person_count": 0, "active_areas": [], "active_touches": [],
+                "touch_events": [], "release_events": [],
                 "last_error": None, "frame_width": 0, "frame_height": 0,
             }
             self._stop = threading.Event()
@@ -166,6 +170,7 @@ class MonitorService:
                 elapsed = time.perf_counter() - started
                 self._set_status(fps=round(count / elapsed, 1), person_count=len(persons),
                                  active_areas=sorted(garden_names), active_touches=events["active"],
+                                 touch_events=events["touch"], release_events=events["release"],
                                  frame_width=width, frame_height=height)
                 remaining = target_frame_time - (time.perf_counter() - frame_started)
                 if remaining > 0:

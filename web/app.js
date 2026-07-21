@@ -77,7 +77,10 @@ async function refreshStatus(){
     $('sourceStatus').textContent=`${s.source_type}: ${s.source}`;
     $('resolution').textContent=s.frame_width?`${s.frame_width} × ${s.frame_height}`:'-';
     $('fps').textContent=s.fps;$('persons').textContent=s.person_count;
-    $('interactionStatus').textContent=s.last_error||`Area aktif: ${s.active_areas.join(', ')||'-'} · Touch: ${s.active_touches.join(', ')||'-'}`;
+    const touching=s.active_touches||[];
+    $('interactionStatus').textContent=s.last_error||`Area aktif: ${s.active_areas.join(', ')||'-'} · Touch: ${touching.join(', ')||'-'}`;
+    $('touchAlert').hidden=!touching.length;
+    $('touchAlertText').textContent=touching.length?`Tanaman disentuh: ${touching.join(', ')}`:'Tanaman disentuh';
     renderSfxList(s.audio);
     $('swapCamera').style.display='inline-block';
     $('useWebcam0').style.display='inline-block';
@@ -91,6 +94,19 @@ function renderSfxList(audio){
   $('audioInfo').textContent=`Audio ${audio.enabled?'aktif':'nonaktif'} · Mixer ${audio.mixer_ready?'siap':'tidak siap'} · Master ${Math.round(audio.master_volume*100)}%`;
   $('sfxList').innerHTML=audio.items.map(item=>`<div class="list-item"><div><b>${escapeHtml(item.name)}</b><div class="${item.loaded?'state-ok':'state-bad'}">${item.loaded?'Siap':item.exists?'Mixer gagal':'File tidak ada'} · volume ${item.volume}</div></div><div class="list-actions"><button onclick="playSfx('${escapeHtml(item.name)}')">Tes</button><button class="secondary" onclick="stopSfx('${escapeHtml(item.name)}')">Stop</button><button class="danger" onclick="removeSfx('${escapeHtml(item.name)}')">Hapus</button></div></div>`).join('')||'<p class="hint">Belum ada SFX.</p>';
 }
+
+function updateSfxUsageForm(){
+  const usage=$('sfxUsage').value;
+  const fixed=usage!=='custom';
+  if(usage==='garden_entry')$('sfxName').value='ambience';
+  if(usage==='plant_touch')$('sfxName').value='plant_touch';
+  $('sfxName').placeholder=usage==='custom'?'orchid_bloom':$('sfxName').value;
+  $('sfxName').readOnly=fixed;
+  $('sfxLoop').checked=usage==='custom'&&$('sfxLoop').checked;
+  $('sfxLoop').disabled=fixed;
+}
+$('sfxUsage').addEventListener('change',updateSfxUsageForm);
+updateSfxUsageForm();
 
 $('applySource').addEventListener('click',async()=>{
   const button=$('applySource');setBusy(button,true,'Mengganti...');
@@ -261,8 +277,8 @@ function drawMapping(){
 
 $('sfxUpload').addEventListener('submit',async event=>{
   event.preventDefault();const button=event.submitter;setBusy(button,true,'Mengupload...');
-  const form=new FormData();form.append('name',$('sfxName').value.trim());form.append('volume',$('sfxVolume').value);form.append('loop',$('sfxLoop').checked);form.append('file',$('sfxFile').files[0]);
-  try{await api('/api/sfx/upload',{method:'POST',body:form});notify('SFX tersimpan dan siap dipilih pada area tanaman');$('sfxUpload').reset();await loadConfiguration();await refreshStatus()}
+  const form=new FormData();form.append('usage',$('sfxUsage').value);form.append('name',$('sfxName').value.trim());form.append('volume',$('sfxVolume').value);form.append('loop',$('sfxLoop').checked);form.append('file',$('sfxFile').files[0]);
+  try{const result=await api('/api/sfx/upload',{method:'POST',body:form});notify(`Audio tersimpan untuk ${result.name}`);$('sfxUpload').reset();updateSfxUsageForm();await loadConfiguration();await refreshStatus()}
   catch(error){notify(error.message,true)}finally{setBusy(button,false)}
 });
 

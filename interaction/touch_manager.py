@@ -57,6 +57,10 @@ class TouchManager:
                     state["is_touching"] = True
                     state["first_detected_time"] = current_time
                     state["triggered"] = False
+                    if self.touch_duration_threshold <= 0:
+                        logging.info(f"[EVENT] PLANT_TOUCH - {zone_name}")
+                        state["triggered"] = True
+                        events["touch"].append(zone_name)
                 else:
                     elapsed = current_time - state["first_detected_time"]
                     if elapsed >= self.touch_duration_threshold and not state["triggered"]:

@@ -7,6 +7,7 @@ import pytest
 import numpy as np
 from interaction.area_manager import AreaManager
 from interaction.touch_manager import TouchManager
+from audio.audio_manager import AudioManager
 
 
 def make_person(bbox=(0, 0, 100, 200), keypoints_conf=0.8):
@@ -27,6 +28,30 @@ def make_wrist_person(lw=(50, 180), rw=(70, 180), conf=0.8):
     kpts[9] = [*lw, conf]
     kpts[10] = [*rw, conf]
     return {"bbox": (20, 30, 100, 200), "conf": 0.9, "keypoints": kpts}
+
+
+class FakeChannel:
+    def __init__(self):
+        self.busy = True
+        self.stopped = False
+
+    def get_busy(self):
+        return self.busy
+
+    def stop(self):
+        self.stopped = True
+        self.busy = False
+
+
+class FakeSound:
+    def __init__(self):
+        self.play_count = 0
+        self.channel = FakeChannel()
+
+    def play(self, loops=0):
+        self.play_count += 1
+        self.channel.busy = True
+        return self.channel
 
 
 class TestAreaManager:
@@ -77,6 +102,14 @@ class TestTouchManager:
         events = tm.update([p])
         assert 'Plant' in [am.areas.get(n, {}).get('name', n) for n in events['active']]
 
+    def test_zero_threshold_triggers_touch_immediately(self):
+        am = AreaManager()
+        am.load({"plant1": {"name": "Plant", "type": "plant", "polygon": [[0, 0], [200, 0], [200, 200], [0, 200]]}})
+        tm = TouchManager(0.0, am)
+        p = make_wrist_person(lw=(50, 100), rw=(150, 100))
+        events = tm.update([p])
+        assert events["touch"] == ["Plant"]
+
     def test_wrist_outside_no_touch(self):
         am = AreaManager()
         am.load({"plant1": {"name": "Plant", "type": "plant", "polygon": [[0, 0], [100, 0], [100, 100], [0, 100]]}})
@@ -84,6 +117,21 @@ class TestTouchManager:
         p = make_wrist_person(lw=(500, 500), rw=(600, 600))
         events = tm.update([p])
         assert events["active"] == []
+
+
+class TestAudioManager:
+    def test_play_skips_same_sfx_while_channel_busy(self):
+        audio = AudioManager(enabled=False)
+        sound = FakeSound()
+        audio.sounds["plant_touch"] = sound
+
+        assert audio.play("plant_touch", loops=0) is True
+        assert audio.play("plant_touch", loops=0) is False
+        assert sound.play_count == 1
+
+        sound.channel.busy = False
+        assert audio.play("plant_touch", loops=0) is True
+        assert sound.play_count == 2
 
 
 if __name__ == "__main__":

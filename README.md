@@ -81,13 +81,17 @@ models:
   pose_half: true
 ```
 
-Untuk komputer tanpa CUDA:
+Untuk komputer tanpa CUDA (termasuk GPU AMD Radeon dan CPU saja):
+
+PyTorch tidak menyediakan wheel ROCm untuk Windows, sehingga di Windows GPU AMD tidak dipakai oleh PyTorch. Inference berjalan di CPU.
 
 ```yaml
 models:
   pose_device: cpu
   pose_half: false
 ```
+
+Catatan untuk pengguna GPU AMD Radeon: di Linux, PyTorch ROCm dapat memakai GPU AMD, tetapi di Windows gunakan konfigurasi CPU di atas.
 
 ### 4. Aktifkan overlay saat testing
 
@@ -315,13 +319,15 @@ Tekan `Q` pada jendela OpenCV untuk keluar.
 
 ### CUDA error
 
-Gunakan konfigurasi CPU:
+Gunakan konfigurasi CPU (juga berlaku untuk GPU AMD Radeon di Windows, karena PyTorch ROCm hanya tersedia di Linux):
 
 ```yaml
 models:
   pose_device: cpu
   pose_half: false
 ```
+
+Jika `pose_device` diset `cuda:0` namun tidak ada GPU NVIDIA, detector akan otomatis fallback ke CPU dan mencatat peringatan di log.
 
 ### SFX tidak berbunyi
 

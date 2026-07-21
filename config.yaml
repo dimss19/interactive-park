@@ -1,4 +1,4 @@
-video_source: assets/videos/WhatsApp Video 2026-07-16 at 15.55.51.mp4
+video_source: 1
 target_fps: 30
 log_level: INFO
 mapping:
@@ -55,16 +55,16 @@ areas:
 audio:
   enabled: true
   master_volume: 0.8
-  ambience: assets/audio/ambience.ogg
-  plant_touch: assets/audio/plant.ogg
+  ambience: assets/audio/Generated Audio July 22, 2026 - 1_15AM.wav
+  plant_touch: assets/audio/Generated Audio July 22, 2026 - 1_17AM.wav
   cooldown_seconds: 5
   sfx:
-    ambience:
-      path: assets/audio/ambience.ogg
-      volume: 0.5
-      loop: true
     plant_touch:
-      path: assets/audio/plant.ogg
+      path: assets/audio/Generated Audio July 22, 2026 - 1_17AM.wav
+      volume: 1.0
+      loop: false
+    ambience:
+      path: assets/audio/Generated Audio July 22, 2026 - 1_15AM.wav
       volume: 1.0
       loop: false
 web:

@@ -45,8 +45,24 @@ class AudioManager:
                         logging.warning(f"[AUDIO] SFX '{name}' load failed: {exc}")
                 else:
                     logging.warning(f"[AUDIO] SFX '{name}' not loaded; file not found: {path}")
+            if "plant_touch" not in self.sounds:
+                self.sounds["plant_touch"] = self._create_warning_tone(pygame)
+                logging.info("[AUDIO] Using generated warning tone for plant_touch")
         except Exception as exc:
             logging.warning(f"[AUDIO] Mixer unavailable; continuing without sound: {exc}")
+
+    def _create_warning_tone(self, pygame: Any) -> Any:
+        import numpy as np
+
+        sample_rate = 44100
+        duration = 0.35
+        frequency = 880
+        samples = np.arange(int(sample_rate * duration))
+        envelope = np.linspace(1.0, 0.2, samples.size)
+        wave = np.sin(2 * np.pi * frequency * samples / sample_rate) * envelope
+        audio = np.column_stack([wave, wave])
+        audio = np.int16(audio * 32767 * self.master_volume)
+        return pygame.sndarray.make_sound(audio)
 
     def status(self) -> Dict[str, Any]:
         items = []
@@ -64,6 +80,10 @@ class AudioManager:
             sound = self.sounds.get(name)
             if sound is None:
                 logging.warning(f"[AUDIO] Cannot play unloaded SFX: {name}")
+                return False
+            channel = self.channels.get(name)
+            if channel is not None and channel.get_busy():
+                logging.info(f"[AUDIO] SFX still playing, skip overlap: {name}")
                 return False
             cfg = self._normalize(self.sfx_config.get(name))
             repeat = loops if loops is not None else (-1 if cfg.get("loop", False) else 0)
@@ -93,16 +113,14 @@ class AudioManager:
         active = set(active_area_names)
         for area_name in active:
             if not self.playing_ambience.get(area_name, False):
-                self.playing_ambience[area_name] = True
-                logging.info(f"[AUDIO] -> START AMBIENCE: {area_name}")
-                self.play("ambience")
+                logging.info(f"[AUDIO] -> PLAY GARDEN ENTRY: {area_name}")
+                if self.play("ambience", loops=0):
+                    self.playing_ambience[area_name] = True
             elif current_time - self.last_log.get(area_name, 0.0) > self.log_cooldown:
                 self.last_log[area_name] = current_time
         for area_name in list(self.playing_ambience):
             if area_name not in active and self.playing_ambience[area_name]:
                 self.playing_ambience[area_name] = False
-                if not any(self.playing_ambience.values()):
-                    self.stop("ambience")
 
     def update_plant_events(self, events: Dict[str, list], zone_sfx: Dict[str, str] | None = None) -> None:
         routes = zone_sfx or {}

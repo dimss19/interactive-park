@@ -1,5 +1,6 @@
 import cv2
 import logging
+import platform
 from typing import Tuple, Optional
 import numpy as np
 
@@ -17,13 +18,17 @@ class VideoLoader:
     def load_video(self) -> bool:
         """Open the video capture."""
         try:
-            self.cap = cv2.VideoCapture(self.source)
+            if isinstance(self.source, int) and platform.system() == "Windows":
+                self.cap = cv2.VideoCapture(self.source, cv2.CAP_DSHOW)
+            else:
+                self.cap = cv2.VideoCapture(self.source)
             if not self.cap.isOpened():
                 logging.error(f"Failed to open video source: {self.source}")
                 return False
             
             # Set a sane resolution for webcam if necessary, or just rely on default
             if isinstance(self.source, int):
+                self.cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
                 self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
                 self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
                 

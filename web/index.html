@@ -23,6 +23,7 @@
       <section id="tab-monitor" class="panel tab-panel active">
         <h2>Live Detection</h2><img id="liveVideo" class="live-video" src="/video-feed" alt="Live detection">
         <div class="actions"><button id="toggleStream">Pause</button><button id="swapCamera">Swap Webcam</button><button id="useWebcam0" class="secondary">Pakai Webcam 0</button></div>
+        <div id="touchAlert" class="touch-alert" hidden><span>PERINGATAN</span><b id="touchAlertText">Tanaman disentuh</b></div>
         <p id="interactionStatus" class="hint">Menunggu status interaksi...</p>
       </section>
 
@@ -79,7 +80,8 @@
       <div id="sfxList" class="list"></div>
       <hr><h3>Upload / ganti SFX</h3>
       <form id="sfxUpload" class="form-grid three">
-        <label>ID SFX<input id="sfxName" pattern="[a-zA-Z0-9_-]+" placeholder="orchid_bloom" required></label>
+        <label>Dipakai untuk<select id="sfxUsage"><option value="garden_entry">Orang masuk area taman</option><option value="plant_touch">Orang menyentuh tanaman</option><option value="custom">Custom / area tertentu</option></select></label>
+        <label>ID SFX<input id="sfxName" pattern="[a-zA-Z0-9_-]+" placeholder="ambience"></label>
         <label>Volume<input id="sfxVolume" type="number" min="0" max="1" step="0.1" value="1"></label>
         <label class="check"><input id="sfxLoop" type="checkbox"> Ulangi / loop</label>
         <label class="span-two">File audio<input id="sfxFile" type="file" accept="audio/*,.ogg,.wav,.mp3" required></label>

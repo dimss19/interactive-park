@@ -234,19 +234,32 @@ def sfx_status():
 
 @app.post("/api/sfx/upload")
 async def upload_sfx(name: str = Form(...), volume: float = Form(1.0),
-                     loop: bool = Form(False), file: UploadFile = File(...)):
-    if not ID_PATTERN.fullmatch(name):
+                     loop: bool = Form(False), usage: str = Form("custom"),
+                     file: UploadFile = File(...)):
+    role_names = {"garden_entry": "ambience", "plant_touch": "plant_touch"}
+    if usage not in {"custom", *role_names.keys()}:
+        raise HTTPException(status_code=400, detail="Tujuan audio tidak valid")
+    name = role_names.get(usage, name.strip())
+    if not name or not ID_PATTERN.fullmatch(name):
         raise HTTPException(status_code=400, detail="ID SFX hanya boleh berisi huruf, angka, _ dan -")
     path = await save_upload(file, AUDIO_DIR, AUDIO_EXTENSIONS)
     config = read_config()
     audio = config.setdefault("audio", {})
     audio.setdefault("enabled", True)
     audio.setdefault("master_volume", 0.8)
-    audio.setdefault("sfx", {})[name] = {
-        "path": relative_media_path(path), "volume": max(0.0, min(1.0, volume)), "loop": loop}
+    sfx = audio.setdefault("sfx", {})
+    should_loop = False if usage in {"garden_entry", "plant_touch"} else loop
+    sfx[name] = {"path": relative_media_path(path), "volume": max(0.0, min(1.0, volume)), "loop": should_loop}
+    if usage == "garden_entry":
+        audio["ambience"] = relative_media_path(path)
+    elif usage == "plant_touch":
+        audio["plant_touch"] = relative_media_path(path)
+        for area in config.get("areas", {}).values():
+            if area.get("type") == "plant":
+                area["audio"] = "plant_touch"
     write_config(config)
     reload_monitor()
-    return {"ok": True, "name": name, "path": relative_media_path(path)}
+    return {"ok": True, "name": name, "usage": usage, "path": relative_media_path(path)}
 
 
 @app.delete("/api/sfx/{name}")
